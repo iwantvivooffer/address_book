@@ -44,7 +44,7 @@ void contactManager::saveContacts() {
         settings.setValue("name", contacts[i].getname());
         settings.setValue("number", contacts[i].getnumber());
         settings.setValue("group", contacts[i].getgroup());
-        settings.setValue("emile", contacts[i].getemile());
+        settings.setValue("emile", contacts[i].getemail());
     }
     settings.endArray();
 }
@@ -59,8 +59,8 @@ void contactManager::loadContacts() {
         QString name = settings.value("name").toString();
         QString number = settings.value("number").toString();
         QString group = settings.value("group").toString();
-        QString emile = settings.value("emile").toString();
-        contacts.append(contact(name, number, group, emile));
+        QString email = settings.value("email").toString();
+        contacts.append(contact(name, number, group, email));
     }
     settings.endArray();
 }
