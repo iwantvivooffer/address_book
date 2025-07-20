@@ -5,7 +5,7 @@ contact::contact()
 
 }
 
-contact::contact(const QString &name, const QString &number,const QString &group,const QString &emile):name(name),number(number),group(group),email(emile){}
+contact::contact(const QString &name, const QString &number,const QString &group,const QString &email):name(name),number(number),group(group),email(email){}
 
 //获取信息
 QString contact::getemail(){
@@ -26,8 +26,8 @@ QString contact::getnumber(){
 
 
 //设置信息
-void contact::setemile(QString &emile){
-    this->email=emile;
+void contact::setemail(QString &email){
+    this->email=email;
 }
 
 void contact::setgroup(QString &group){
