@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     nameEdit = new QLineEdit;
     numberEdit = new QLineEdit;
     groupEdit = new QLineEdit;
-    emileEdit = new QLineEdit;
+    emailEdit = new QLineEdit;
     
     // 按钮
     QPushButton* addbtn = new QPushButton("添加联系人");
@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     nameEdit->setStyleSheet(blurStyle);
     numberEdit->setStyleSheet(blurStyle);
     groupEdit->setStyleSheet(blurStyle);
-    emileEdit->setStyleSheet(blurStyle);
+    emailEdit->setStyleSheet(blurStyle);
     addbtn->setStyleSheet(blurStyle);
     delbth->setStyleSheet(blurStyle);
     filterbtn->setStyleSheet(blurStyle);
@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addWidget(new QLabel("组别："));
     layout->addWidget(groupEdit);
     layout->addWidget(new QLabel("邮箱："));
-    layout->addWidget(emileEdit);
+    layout->addWidget(emailEdit);
     layout->addWidget(addbtn);
     layout->addWidget(delbth);
     layout->addWidget(filterbtn);
@@ -110,14 +110,14 @@ void MainWindow::onAddContact() {
     QString name = nameEdit->text().trimmed();
     QString number = numberEdit->text().trimmed();
     QString group = groupEdit->text().trimmed();
-    QString emile = emileEdit->text().trimmed();
+    QString email = emailEdit->text().trimmed();
     
     if(name.isEmpty() || number.isEmpty()) {
         QMessageBox::warning(this, "输入错误", "姓名和电话不能为空");
         return;
     }
     
-    contact temp(name, number, group, emile);
+    contact temp(name, number, group, email);
     m_contact.addcontact(temp);
     refreshContactList();  // 刷新列表
     
