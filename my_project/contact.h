@@ -10,7 +10,7 @@ private:
     QString name;
     QString number;
     QString group;
-    QString emile;
+    QString email;
     
     
 public:
@@ -21,12 +21,12 @@ public:
     void setname(QString&name);
     void setnumber(QString&number);
     void setgroup(QString&group);
-    void setemile(QString&emile);
+    void setemail(QString&emile);
     //获取信息
     QString getname();
     QString getnumber();
     QString getgroup();
-    QString getemile();
+    QString getemail();
     
 };
 
