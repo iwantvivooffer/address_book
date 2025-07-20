@@ -6,6 +6,7 @@
 #include<QLineEdit>
 #include<QListWidget>
 #include<QVBoxLayout>
+#include<QHBoxLayout>
 #include<QIcon>
 #include<QPainter>
 #include<QPixmap>
@@ -34,13 +35,13 @@ private:
     //定义对象
     contactManager m_contact;
 
-    //编辑输入
+    //输入栏
     QLineEdit*nameEdit;
     QLineEdit*numberEdit;
     QLineEdit*groupEdit;
     QLineEdit*emileEdit;
 
-    //
+    //List清单
     QListWidget*contactlist;
 
 
