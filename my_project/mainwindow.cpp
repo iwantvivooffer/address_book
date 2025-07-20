@@ -124,7 +124,7 @@ void MainWindow::onAddContact() {
     // 清空输入框（保留组别）
     nameEdit->clear();
     numberEdit->clear();
-    emileEdit->clear();
+    emailEdit->clear();
 }
 
 // 删除联系人
