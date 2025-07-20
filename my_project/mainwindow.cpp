@@ -19,14 +19,38 @@ MainWindow::MainWindow(QWidget *parent) :
     QWidget*central=new QWidget(this);
     QVBoxLayout*layout=new QVBoxLayout(central);
 
-
-
     //输入栏
     nameEdit=new QLineEdit;
     numberEdit=new QLineEdit;
     groupEdit=new QLineEdit;
     emileEdit=new QLineEdit;
 
+    //设置图标
+    QPixmap namePixmap(":/res/picture/user.jpg");
+    QPixmap numberPixmap(":/res/picture/phone.png");
+    QPixmap groupPixmap(":/res/picture/common.webp");
+    QPixmap emilePixmap(":/res/picture/emile.png");
+
+    // 统一设置每行布局
+    auto createInputRow = [](const QPixmap &icon, const QString &labelText, QLineEdit *edit) {
+        QLabel *iconLabel = new QLabel;
+        iconLabel->setPixmap(icon.scaled(20, 20, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        iconLabel->setFixedSize(24, 24);
+
+        QLabel *textLabel = new QLabel(labelText);
+        textLabel->setFixedWidth(50); // 固定宽度使对齐更美观
+
+        QHBoxLayout *row = new QHBoxLayout;
+        row->setSpacing(8);
+        row->addWidget(iconLabel, 0, Qt::AlignVCenter);
+        row->addWidget(textLabel, 0, Qt::AlignVCenter);
+        row->addWidget(edit);
+
+        QWidget *rowWidget = new QWidget;
+        rowWidget->setLayout(row);
+        return rowWidget;
+    };
+    
 
     //按键
     QPushButton*addbtn=new QPushButton("添加联系人");
@@ -62,14 +86,18 @@ MainWindow::MainWindow(QWidget *parent) :
         color: black;
     )");
 
+    // 创建各行
+    nameWidget = createInputRow(namePixmap, "姓名：", nameEdit);
+    numberWidget = createInputRow(numberPixmap, "电话：", numberEdit);
+    groupWidget = createInputRow(groupPixmap, "组别：", groupEdit);
+    emileWidget = createInputRow(emilePixmap, "邮箱：", emileEdit);
+
+    
     //输入展示
-    layout->addWidget(new QLabel("姓名："));
-    layout->addWidget(nameEdit);
-    layout->addWidget(new QLabel("电话："));
-    layout->addWidget(numberEdit);
-    layout->addWidget(new QLabel("组别："));
-    layout->addWidget(groupEdit);
-    layout->addWidget(new QLabel("邮箱："));
+    layout->addWidget(nameWidget);
+    layout->addWidget(numberWidget);
+    layout->addWidget(groupWidget);
+    layout->addWidget(emileWidget);
     layout->addWidget(emileEdit);
     layout->addWidget(addbtn);
     layout->addWidget(delbth);
@@ -106,7 +134,7 @@ void MainWindow::onAddContact(){
         return;
     contact temp(name,number,group,emile);
     m_contact.addcontact(temp);
-    contactlist->addItem(QString("%1                         %2").arg(name,group));
+    contactlist->addItem(QString("%1          %2               %3").arg(name,number,group));
 
 }
 
@@ -127,7 +155,7 @@ void MainWindow::onFilterGroup(){
     //目标数组
     QList<contact> target=m_contact.getcontactsByGroup(group);
     for(auto &c:target){
-        contactlist->addItem(QString("%1        %2").arg(c.getname(),c.getgroup()));
+        contactlist->addItem(QString("%1       %2      %3").arg(c.getname(),c.getnumber(),c.getgroup()));
     }
 }
 
