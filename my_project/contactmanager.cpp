@@ -3,12 +3,14 @@
 contactManager::contactManager()
 {
 
+    loadContacts();  // 构造函数中加载联系人
 }
 
 
 //增删联系人
 void contactManager::addcontact(contact &contact){
     contacts.append(contact);
+    saveContacts();  // 添加后保存
 }
 
 bool contactManager::deletecontact(QString &name){
@@ -32,4 +34,33 @@ QList<contact> contactManager::getcontactsByGroup(QString &group){
         }
         return result;
     
+}
+// 实现保存联系人
+void contactManager::saveContacts() {
+    QSettings settings("ContactApp", "ContactManager");
+    settings.beginWriteArray("contacts");
+    for (int i = 0; i < contacts.size(); ++i) {
+        settings.setArrayIndex(i);
+        settings.setValue("name", contacts[i].getname());
+        settings.setValue("number", contacts[i].getnumber());
+        settings.setValue("group", contacts[i].getgroup());
+        settings.setValue("emile", contacts[i].getemile());
+    }
+    settings.endArray();
+}
+
+// 实现加载联系人
+void contactManager::loadContacts() {
+    contacts.clear();
+    QSettings settings("ContactApp", "ContactManager");
+    int size = settings.beginReadArray("contacts");
+    for (int i = 0; i < size; ++i) {
+        settings.setArrayIndex(i);
+        QString name = settings.value("name").toString();
+        QString number = settings.value("number").toString();
+        QString group = settings.value("group").toString();
+        QString emile = settings.value("emile").toString();
+        contacts.append(contact(name, number, group, emile));
+    }
+    settings.endArray();
 }
