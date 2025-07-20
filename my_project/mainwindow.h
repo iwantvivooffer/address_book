@@ -33,7 +33,7 @@ private:
     QLineEdit*nameEdit;
     QLineEdit*numberEdit;
     QLineEdit*groupEdit;
-    QLineEdit*emileEdit;
+    QLineEdit*emailEdit;
     QListWidget*contactlist;
     
     // 添加刷新列表函数
