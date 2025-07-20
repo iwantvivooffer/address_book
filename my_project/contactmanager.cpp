@@ -44,7 +44,7 @@ void contactManager::saveContacts() {
         settings.setValue("name", contacts[i].getname());
         settings.setValue("number", contacts[i].getnumber());
         settings.setValue("group", contacts[i].getgroup());
-        settings.setValue("emile", contacts[i].getemail());
+        settings.setValue("email", contacts[i].getemail());
     }
     settings.endArray();
 }
