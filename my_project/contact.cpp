@@ -1,40 +1,57 @@
-#ifndef CONTACT_H
-#define CONTACT_H
+#include "contact.h"
 
-#include<QString>
-#include<QJsonObject>
-
-class contact
+contact::contact()
 {
-private:
-    //基本信息
-    QString name;
-    QString number;
-    QString group;
-    QString email;
+}
 
-public:
-    //构造函数
-    contact();
-    contact(const QString& name, const QString& number, const QString& group = "", const QString& email = "");
+contact::contact(const QString &name, const QString &number, const QString &group, const QString &email)
+    : name(name), number(number), group(group), email(email){}
 
-    //修改信息
-    void setname(const QString& name);
-    void setnumber(const QString& number);
-    void setgroup(const QString& group);
-    void setemail(const QString& email);
+//获取信息
+QString contact::getemail() {
+    return email;
+}
+QString contact::getgroup() {
+    return group;
+}
+QString contact::getname() {
+    return name;
+}
+QString contact::getnumber() {
+    return number;
+}
 
-    //获取信息
-    QString getname();
-    QString getnumber();
-    QString getgroup();
-    QString getemail();
+//设置信息
+void contact::setemail(const QString &email) {
+    this->email = email;
+}
+void contact::setgroup(const QString &group) {
+    this->group = group;
+}
+void contact::setname(const QString &name) {
+    this->name = name;
+}
+void contact::setnumber(const QString &number) {
+    this->number = number;
+}
 
-    // 序列化成 QJsonObject
-    QJsonObject toJson() const;
+// JSON序列化
+QJsonObject contact::toJson() const {
+    QJsonObject obj;
+    obj["name"] = name;
+    obj["number"] = number;
+    obj["group"] = group;
+    obj["email"] = email;
+    return obj;
+}
+// JSON反序列化
+contact contact::fromJson(const QJsonObject &obj) {
+    contact c;
+    c.setname(obj["name"].toString());
+    c.setnumber(obj["number"].toString());
+    c.setgroup(obj["group"].toString());
+    c.setemail(obj["email"].toString());
+    return c;
+}
 
-    // 从 QJsonObject 创建 contact
-    static contact fromJson(const QJsonObject &obj);
-};
 
-#endif // CONTACT_H
