@@ -1,44 +1,40 @@
-#include "contact.h"
+#ifndef CONTACT_H
+#define CONTACT_H
 
-contact::contact()
+#include<QString>
+#include<QJsonObject>
+
+class contact
 {
+private:
+    //基本信息
+    QString name;
+    QString number;
+    QString group;
+    QString email;
 
-}
+public:
+    //构造函数
+    contact();
+    contact(const QString& name, const QString& number, const QString& group = "", const QString& email = "");
 
-contact::contact(const QString &name, const QString &number,const QString &group,const QString &email):name(name),number(number),group(group),email(email){}
+    //修改信息
+    void setname(const QString& name);
+    void setnumber(const QString& number);
+    void setgroup(const QString& group);
+    void setemail(const QString& email);
 
-//获取信息
-QString contact::getemail(){
-    return email;
-}
+    //获取信息
+    QString getname();
+    QString getnumber();
+    QString getgroup();
+    QString getemail();
 
-QString contact::getgroup(){
-    return group;
-}
+    // 序列化成 QJsonObject
+    QJsonObject toJson() const;
 
-QString contact::getname(){
-    return name;
-}
+    // 从 QJsonObject 创建 contact
+    static contact fromJson(const QJsonObject &obj);
+};
 
-QString contact::getnumber(){
-    return number;
-}
-
-
-//设置信息
-void contact::setemail(QString &email){
-    this->email=email;
-}
-
-void contact::setgroup(QString &group){
-    this->group=group;
-}
-
-void contact::setname(QString &name){
-    this->name=name;
-}
-
-void contact::setnumber(QString &number){
-    this->number=number;
-}
-
+#endif // CONTACT_H
