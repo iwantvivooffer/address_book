@@ -48,6 +48,7 @@ public slots:
     void onAddContact();
     void onDeleteContact();
     void onFilterGroup();
+    void onContactItemClicked(QListWidgetItem *item);
 };
 
 #endif // MAINWINDOW_H
