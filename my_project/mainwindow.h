@@ -6,11 +6,10 @@
 #include<QLineEdit>
 #include<QListWidget>
 #include<QVBoxLayout>
-#include<QHBoxLayout>
 #include<QIcon>
 #include<QPainter>
 #include<QPixmap>
-
+#include<QMessageBox>
 
 #include"contactmanager.h"
 #include"contact.h"
@@ -30,20 +29,15 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
-
-    //定义对象
     contactManager m_contact;
-
-    //输入栏
     QLineEdit*nameEdit;
     QLineEdit*numberEdit;
     QLineEdit*groupEdit;
     QLineEdit*emileEdit;
-
-    //List清单
     QListWidget*contactlist;
-
+    
+    // 添加刷新列表函数
+    void refreshContactList();
 
 public slots:
     void onAddContact();
