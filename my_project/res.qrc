@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/picture/bk1.png</file>
+        <file>res/picture/bk2.png</file>
+        <file>res/picture/bk3.webp</file>
+        <file>res/picture/common.webp</file>
+        <file>res/picture/family.jpg</file>
+        <file>res/picture/friend.jpg</file>
+        <file>res/picture/head1.png</file>
+        <file>res/picture/head2.png</file>
+        <file>res/picture/head3.png</file>
+        <file>res/picture/icon.jpg</file>
+        <file>res/picture/phone.png</file>
+        <file>res/picture/user.jpg</file>
+    </qresource>
+</RCC>
