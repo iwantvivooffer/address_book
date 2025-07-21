@@ -1,4 +1,4 @@
- #ifndef INFORMATIONPAGE_H
+#ifndef INFORMATIONPAGE_H
 #define INFORMATIONPAGE_H
 
 #include <QWidget>
@@ -32,18 +32,19 @@ private slots:
     void onDeleteClicked();
     void checkForChanges();
 
+
 private:
     contact originalContact;
     QLineEdit *nameEdit;
     QLineEdit *numberEdit;
     QLineEdit *groupEdit;
     QLineEdit *emailEdit;
-    
+
     QPushButton *backButton;
     QPushButton *saveButton;
     QPushButton *deleteButton;
     QPropertyAnimation *animation;
-    
+
     bool hasChanges = false;
 };
 
