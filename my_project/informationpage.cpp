@@ -92,7 +92,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     // 按钮布局
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     buttonLayout->setSpacing(20);
-    
+
     // 保存按钮
     saveButton = new QPushButton("保存", contentFrame);
     saveButton->setStyleSheet(R"(
@@ -104,7 +104,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     )");
     saveButton->setFixedHeight(40);
     buttonLayout->addWidget(saveButton);
-    
+
     // 删除按钮
     deleteButton = new QPushButton("删除联系人", contentFrame);
     deleteButton->setStyleSheet(R"(
@@ -116,7 +116,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     )");
     deleteButton->setFixedHeight(40);
     buttonLayout->addWidget(deleteButton);
-    
+
     layout->addLayout(buttonLayout);
 
     // 返回按钮
@@ -139,7 +139,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     connect(backButton, &QPushButton::clicked, this, &InformationPage::checkForChanges);
     connect(saveButton, &QPushButton::clicked, this, &InformationPage::onSaveClicked);
     connect(deleteButton, &QPushButton::clicked, this, &InformationPage::onDeleteClicked);
-    
+
     // 监听编辑框变化
     connect(nameEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
     connect(numberEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
@@ -162,12 +162,11 @@ void InformationPage::showContactDetails(contact &contact)
     groupEdit->setText(contact.getgroup());
     emailEdit->setText(contact.getemail());
     hasChanges = false;
-
     // 如果是新联系人，隐藏删除按钮
-        if(contact.getname().isEmpty()) {
-            deleteButton->hide();
+    if(contact.getname().isEmpty()) {
+        deleteButton->hide();
         } else {
-            deleteButton->show();
+          deleteButton->show();
         }
 }
 
@@ -204,29 +203,32 @@ void InformationPage::onSaveClicked()
         return;
     }
 
-    contact modifiedContact(name, number, groupEdit->text().trimmed(), emailEdit->text().trimmed());
+    contact modifiedContact(
+        nameEdit->text().trimmed(),
+        numberEdit->text().trimmed(),
+        groupEdit->text().trimmed(),
+        emailEdit->text().trimmed()
+    );
+
     emit saveContact(originalContact, modifiedContact);
     hasChanges = false;
 
-    // ✅ 清空输入框（重置为新建状态）
     originalContact = contact(); // 清空原始联系人
     nameEdit->clear();
     numberEdit->clear();
-    groupEdit->clear();
+     groupEdit->clear();
     emailEdit->clear();
     deleteButton->hide(); // 隐藏删除按钮（因为是新建）
-
-    // ✅ 关闭页面
     slideOut();
 }
 
 void InformationPage::onDeleteClicked()
 {
     QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "删除联系人", 
+    reply = QMessageBox::question(this, "删除联系人",
                                  "确定要删除这个联系人吗？",
                                  QMessageBox::Yes | QMessageBox::No);
-    
+
     if (reply == QMessageBox::Yes) {
         emit deleteContact(originalContact.getname());
         slideOut();
@@ -247,13 +249,12 @@ void InformationPage::checkForChanges()
         } else if (reply == QMessageBox::Discard) {
             // 如果是新联系人且选择放弃，不创建联系人
             if(originalContact.getname().isEmpty()) {
-                // 不需要执行任何操作，联系人不会被创建
+            // 不需要执行任何操作，联系人不会被创建
             }
             slideOut();
         }
         // 如果选择Cancel，则不做任何操作
     } else {
-        // 如果是新联系人且没有修改，直接退出
         slideOut();
     }
 }
