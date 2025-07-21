@@ -43,18 +43,20 @@ private:
     contactManager m_contact;
 
     //编辑输入
-    QLineEdit*nameEdit;
-    QLineEdit*numberEdit;
-    QLineEdit*groupEdit;
-    QLineEdit*emailEdit;
-    QLineEdit*searchEdit;
+   QLineEdit*nameEdit;
+   QLineEdit*numberEdit;
+   QLineEdit*groupEdit;
+   QLineEdit*emailEdit;
+   QLineEdit*searchEdit;
 
     //部件定义
-    QWidget*nameWidget;
+   QWidget*nameWidget;
     QWidget*numberWidget;
-    QWidget*groupWidget;
+   QWidget*groupWidget;
     QWidget*emailWidget;
 
+    //添加按钮
+QPushButton* addButton;
     //下拉菜单
     QComboBox*searchCombo;
 
@@ -71,11 +73,12 @@ private:
 
 public slots:
     void onAddContact();
-    void onDeleteContact();
+    void onDeleteContact(QString name);
     void onSearchContact();
     void onContactItemClicked(QListWidgetItem *item); 
     void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
    void onSaveContact(contact original, contact modified);
+   void onAddButtonClicked();
 };
 
 #endif // MAINWINDOW_H
