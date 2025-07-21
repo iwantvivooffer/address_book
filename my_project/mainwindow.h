@@ -76,6 +76,7 @@ public slots:
     void onSearchContact();
     void onContactItemClicked(QListWidgetItem *item); 
     void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
+   void onSaveContact(contact original, contact modified);
 };
 
 #endif // MAINWINDOW_H
