@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QLineEdit>
 #include <QMessageBox>
+
 #include "contact.h"
 
 class InformationPage : public QWidget
