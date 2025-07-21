@@ -186,7 +186,7 @@ void InformationPage::showEvent(QShowEvent *event)
     backButton->move(margin, margin);
 }
 
-void InformationPage::showContactDetails(contact &contact)
+void InformationPage::showContactDetails(const contact &contact)
 {
     originalContact = contact;
     nameEdit->setText(contact.getname());
