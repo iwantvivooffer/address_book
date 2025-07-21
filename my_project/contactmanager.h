@@ -16,7 +16,7 @@ private:
 public:
     contactManager();
     //增删联系人
-    void addcontact(contact&contact);
+    void addcontact(const contact&contact);
     bool deletecontact(const QString&name);
 
     //排序
