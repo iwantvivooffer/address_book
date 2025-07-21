@@ -46,6 +46,7 @@ private:
     QLineEdit*numberEdit;
     QLineEdit*groupEdit;
     QLineEdit*emailEdit;
+    QLineEdit*searchEdit;
 
     //部件定义
     QWidget*nameWidget;
@@ -56,18 +57,21 @@ private:
     //展示框
     QListWidget*contactlist;
 
-// 添加信息页面指针
-InformationPage *infoPage; 
+    // 添加信息页面指针
+    InformationPage *infoPage; 
 
     // 添加刷新列表函数
     void refreshContactList();
+    void refreshContactListFiltered(const QString &filter);
+
 
 public slots:
     void onAddContact();
     void onDeleteContact();
     void onFilterGroup();
-void onContactItemClicked(QListWidgetItem *item); 
-        void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
+    void onSearchContact();
+    void onContactItemClicked(QListWidgetItem *item); 
+    void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
 };
 
 #endif // MAINWINDOW_H
