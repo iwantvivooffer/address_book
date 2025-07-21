@@ -85,9 +85,6 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     )");
 
-
-
-
     //输入展示
     layout->addLayout(searchLayout);
     layout->addWidget(contactlist);
@@ -226,10 +223,16 @@ void MainWindow::refreshContactListFiltered(const QString &filter, const QString
         }
 
         if (match) {
-            contactlist->addItem(QString("%1").arg(c.getname()));
+            QFont itemFont("方正舒体", 20);
+            QString text = QString("%1").arg(c.getname());
+            QListWidgetItem* item = new QListWidgetItem(text);
+            item->setFont(itemFont);
+            item->setSizeHint(QSize(0, 60));  // 适当调整高度
+            contactlist->addItem(item);
         }
     }
 }
+
 
 
 // 处理联系人列表项点击事件
