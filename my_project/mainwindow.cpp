@@ -62,6 +62,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QPushButton*addbtn=new QPushButton("添加联系人");
     QPushButton*filterbtn=new QPushButton("按组查看");
     QPushButton*searchbtn=new QPushButton;
+    QPushButton*searchbtn=new QPushButton;
+
+    //搜索菜单
+    searchCombo=new QComboBox;
+    searchCombo->addItem("姓名");
+    searchCombo->addItem("电话");
+    searchCombo->addItem("邮箱");
+    searchCombo->addItem("组别");
+    searchCombo->setFixedSize(70,40);
 
     //搜索按键
     QHBoxLayout *searchLayout = new QHBoxLayout;
@@ -70,8 +79,9 @@ MainWindow::MainWindow(QWidget *parent) :
     searchbtn->setIcon(searchIcon);
     searchbtn->setIconSize(QSize(30,30));
     searchbtn->setFlat(true);
-    searchLayout->addWidget(searchEdit);
     searchLayout->addWidget(searchbtn);
+    searchLayout->addWidget(searchCombo);
+    searchLayout->addWidget(searchEdit);
     
 
     //毛玻璃效果
@@ -128,7 +138,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(filterbtn,&QPushButton::clicked,this,&MainWindow::onFilterGroup);
     connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
     connect(searchbtn, &QPushButton::clicked, this, &MainWindow::onSearchContact);
-
+    connect(searchEdit, &QLineEdit::returnPressed, this, &MainWindow::onSearchContact);
+    connect(nameEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
+    connect(numberEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
+    connect(emailEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
+    connect(groupEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
     
     // 加载联系人到列表
     refreshContactList();
@@ -205,18 +219,34 @@ void MainWindow::onFilterGroup(){
 //搜索
 void MainWindow::onSearchContact() {
     QString filter = searchEdit->text();
-    refreshContactListFiltered(filter);
+    QString field = searchCombo->currentText();
+
+    refreshContactListFiltered(filter, field);
 }
-void MainWindow::refreshContactListFiltered(const QString &filter) {
+void MainWindow::refreshContactListFiltered(const QString &filter, const QString &field) {
     contactlist->clear();
     QList<contact> all = m_contact.getcontacts();
-    for (contact &c : all) {
-        if (filter.isEmpty() || c.getname().contains(filter, Qt::CaseInsensitive)) {
+
+    for (const contact &c : all) {
+        bool match = false;
+
+        if (filter.isEmpty()) {
+            match = true;  // 空过滤显示全部
+        } else if (field == "姓名") {
+            match = c.getname().contains(filter, Qt::CaseInsensitive);
+        } else if (field == "电话") {
+            match = c.getnumber().contains(filter, Qt::CaseInsensitive);
+        } else if (field == "组别") {
+            match = c.getgroup().contains(filter, Qt::CaseInsensitive);
+        } else if (field == "邮箱") {
+            match = c.getemail().contains(filter, Qt::CaseInsensitive);
+        }
+
+        if (match) {
             contactlist->addItem(QString("%1").arg(c.getname()));
         }
     }
 }
-
 
 // 处理联系人列表项点击事件
 void MainWindow::onContactItemClicked(QListWidgetItem *item)
