@@ -6,12 +6,15 @@
 #include<QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include<QFont>
+#include<QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     setWindowTitle("小型通讯录");
     resize(500,750);
 
@@ -60,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
     searchLayout->addStretch(); // 添加弹性空间
     searchLayout->addWidget(addButton); //按钮加到布局里
 
-
     //毛玻璃效果
     QString blurStyle = R"(
         background-color: rgba(255, 255, 255, 120);
@@ -80,15 +82,24 @@ MainWindow::MainWindow(QWidget *parent) :
     contactlist=new QListWidget;
     contactlist->setStyleSheet(R"(
         QListWidget::item {
-            border-bottom: 1px solid gray;
-            padding: 5px;
+            background-color: rgba(255, 255, 255, 120); /* 半透明白色背景 */
+            border-radius: 12px; /* 圆角 */
+            border: 1px solid rgba(200, 200, 200, 150); /* 略深的半透明灰色边框 */
+            padding: 10px; /* 内边距 */
+            margin-bottom: 8px; /* 项目之间的间距 */
+            color: black; /* 文本颜色 */
+        }
+        QListWidget::item:selected {
+            background-color: rgba(180, 220, 255, 150); /* 选中时的更明显毛玻璃效果 */
+            border: 1px solid rgba(150, 200, 255, 120);
         }
     )");
+    contactlist->setSpacing(8); // 设置 QListWidget 中项目之间的间距
+
 
     //输入展示
     layout->addLayout(searchLayout);
     layout->addWidget(contactlist);
-
 
     setCentralWidget(central);
 
@@ -104,9 +115,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // 创建信息页面
     infoPage = new InformationPage(this);
-        connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
-        connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
-        connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
+    connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
+    connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
+    connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
 }
 
 // 刷新联系人列表
@@ -114,14 +125,14 @@ void MainWindow::refreshContactList() {
 
     contactlist->clear();
 
-    // 排序
+    //排序
     m_contact.sortContactsByName();
 
     QFont itemFont("方正舒体", 20);
-    
+
     QList<contact> all = m_contact.getcontacts();
     for(auto &c : all) {
-        QString text = QString("%1\n%2").arg(c.getname()).arg(c.getnumber());
+        QString text = QString("姓名：%1\n电话：%2").arg(c.getname()).arg(c.getnumber());
         QListWidgetItem* item = new QListWidgetItem(text);
 
         item->setFont(itemFont);
@@ -224,29 +235,45 @@ void MainWindow::refreshContactListFiltered(const QString &filter, const QString
 
         if (match) {
             QFont itemFont("方正舒体", 20);
-            QString text = QString("%1").arg(c.getname());
+            QString text = QString("姓名：%1\n电话：%2").arg(c.getname()).arg(c.getnumber());
             QListWidgetItem* item = new QListWidgetItem(text);
             item->setFont(itemFont);
-            item->setSizeHint(QSize(0, 60));  // 适当调整高度
+            item->setSizeHint(QSize(0, 100));  // 适当调整高度
             contactlist->addItem(item);
         }
     }
 }
 
 
-
 // 处理联系人列表项点击事件
 void MainWindow::onContactItemClicked(QListWidgetItem *item)
 {
-    QString name = item->text().split('\n').first();
+    // 提取点击的列表项中的姓名部分
+    QString clickedItemText = item->text().split('\n').first().trimmed();
+
+    QString clickedName;
+    // 检查是否以 "姓名：" 开头，如果是则移除
+    if (clickedItemText.startsWith("姓名：")) {
+        clickedName = clickedItemText.mid(QString("姓名：").length());
+    } else {
+        // 如果没有 "姓名：" 前缀，就直接使用它（理论上在你的应用中应该总是有）
+        clickedName = clickedItemText;
+    }
+    clickedName = clickedName.trimmed(); // 再次去除首尾空格，确保干净
+
     QList<contact> all = m_contact.getcontacts();
-    for (auto &c : all) {
-        if (c.getname() == name) {
+
+    for (const contact &c : all) {
+        // 获取存储的联系人姓名，并去除首尾空格进行比较
+        if (c.getname().trimmed() == clickedName) {
             infoPage->showContactDetails(c);
             infoPage->slideIn();
-            break;
+            return; // 找到并显示后，立即返回
         }
     }
+
+    // 如果循环结束都没有找到匹配的联系人
+    QMessageBox::warning(this, "查找失败", "未找到该联系人信息！请检查姓名是否完全一致。");
 }
 
 // 处理添加按钮点击
