@@ -112,9 +112,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addbtn,&QPushButton::clicked,this,&MainWindow::onAddContact);
     connect(delbth,&QPushButton::clicked,this,&MainWindow::onDeleteContact);
     connect(filterbtn,&QPushButton::clicked,this,&MainWindow::onFilterGroup);
-
+connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
     // 加载联系人到列表
     refreshContactList();
+    // 创建信息页面
+        infoPage = new InformationPage(this);
+        connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
 }
 
 // 刷新联系人列表
@@ -196,7 +199,25 @@ void MainWindow::onFilterGroup(){
     }
 }
 
+// 处理联系人列表项点击事件
+void MainWindow::onContactItemClicked(QListWidgetItem *item)
+{
+    QString name = item->text().split(" ").first();
+    QList<contact> all = m_contact.getcontacts();
+    for (auto &c : all) {
+        if (c.getname() == name) {
+            infoPage->showContactDetails(c);
+            infoPage->slideIn();
+            break;
+        }
+    }
+}
 
+// 处理信息页面返回按钮点击事件
+void MainWindow::onInfoPageBackClicked()
+{
+    infoPage->slideOut();
+}
 
 MainWindow::~MainWindow()
 {
