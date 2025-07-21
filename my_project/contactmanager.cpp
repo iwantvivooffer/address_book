@@ -2,6 +2,8 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QDebug>
+#include<algorithm>
+#include<QCollator>
 
 contactManager::contactManager()
 {
@@ -10,6 +12,7 @@ contactManager::contactManager()
 //增删联系人
 void contactManager::addcontact(contact &contact){
     contacts.append(contact);
+    sortContactsByName();//添加信息后马上就排序
 }
 bool contactManager::deletecontact(const QString &name){
     for(int i = 0; i < contacts.size(); ++i){
@@ -19,6 +22,18 @@ bool contactManager::deletecontact(const QString &name){
         }
     }
     return false;  // 没找到对应联系人
+}
+
+//排序实现
+void contactManager::sortContactsByName()
+{
+    QCollator collator;
+    collator.setLocale(QLocale::Chinese); // 支持中文拼音排序
+    collator.setNumericMode(true);
+
+    std::sort(contacts.begin(), contacts.end(), [&](const contact &a, const contact &b) {
+        return collator.compare(a.getname(), b.getname()) < 0;
+    });
 }
 
 //获取联系人
@@ -66,6 +81,7 @@ void contactManager::loadFromJson(const QString &filename) {
         QJsonObject obj = val.toObject();
         contacts.append(contact::fromJson(obj));
     }
-    qDebug() << "Loaded" << contacts.size() << "contacts from" << filename;
+    
+    sortContactsByName();
 }
 
