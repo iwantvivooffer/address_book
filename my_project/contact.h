@@ -25,10 +25,10 @@ public:
     void setemail(const QString& email);
 
     //获取信息
-    QString getname();
-    QString getnumber();
-    QString getgroup();
-    QString getemail();
+    QString getname() const ;
+    QString getnumber() const;
+    QString getgroup() const;
+    QString getemail() const;
 
     // 序列化成 QJsonObject
     QJsonObject toJson() const;
