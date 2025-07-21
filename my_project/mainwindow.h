@@ -72,7 +72,6 @@ private:
 public slots:
     void onAddContact();
     void onDeleteContact();
-    void onFilterGroup();
     void onSearchContact();
     void onContactItemClicked(QListWidgetItem *item); 
     void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
