@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //按键
     QPushButton*addbtn=new QPushButton("添加联系人");
     QPushButton*filterbtn=new QPushButton("按组查看");
-    QPushButton*searchbtn=new QPushButton;
+    QPushButton*delbtn=new QPushButton("删除联系人");
     QPushButton*searchbtn=new QPushButton;
 
     //搜索菜单
