@@ -18,7 +18,7 @@ public:
     explicit InformationPage(QWidget *parent = nullptr);
     ~InformationPage();
 
-    void showContactDetails(contact &contact);
+    void showContactDetails(const contact &contact);
     void slideIn();
     void slideOut();
     void showEvent(QShowEvent *event) override;
