@@ -4,6 +4,7 @@
 #include <QShowEvent>
 #include <QVBoxLayout>
 #include <QDebug>
+#include <QHBoxLayout>
 
 InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
 {
@@ -12,18 +13,15 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     // 初始位置在右侧（不可见）
     move(parentWidget()->width(), 0);
 
-    // -------------------------- 1. 最底层：浅棕色背景（全屏） --------------------------
-    // 创建背景层，作为InformationPage的直接子部件
+    // 背景层
     QWidget *backgroundLayer = new QWidget(this);
     backgroundLayer->setGeometry(0, 0, width(), height());
-
-    // 使用浅棕色背景 (#f5deb3 是一种常见的浅棕色)
     backgroundLayer->setStyleSheet(R"(
         background-color: #f5deb3;
     )");
 
-    // -------------------------- 2. 中间层：白色内容框（带边框效果） --------------------------
-    int margin = 20; // 内容框与窗口边缘的距离
+    // 内容框
+    int margin = 20;
     QWidget *contentFrame = new QWidget(backgroundLayer);
     contentFrame->setGeometry(
         margin, margin,
@@ -32,68 +30,96 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     );
     contentFrame->setStyleSheet(R"(
         background-color: white;
-        border: 1px solid #d0b090; /* 棕色边框 */
+        border: 1px solid #d0b090;
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加轻微阴影增强立体感 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     )");
 
-    // -------------------------- 3. 内容区布局（放在白色内容框内） --------------------------
+    // 内容布局
     QVBoxLayout *layout = new QVBoxLayout(contentFrame);
     layout->setContentsMargins(40, 80, 40, 80);
     layout->setSpacing(30);
 
-    // 信息标签样式
-    QString labelStyle = R"(
-        background-color: #f8f8f8; /* 浅灰色背景 */
+    // 编辑框样式
+    QString editStyle = R"(
+        background-color: #f8f8f8;
         border: 1px solid #e0e0e0;
         border-radius: 6px;
         padding: 8px 12px;
-        color: #333; /* 深灰色文字 */
+        color: #333;
         min-height: 30px;
         font-size: 16px;
     )";
 
-    // 创建信息标签
-    QFont labelFont("Microsoft YaHei", 10, QFont::Normal);
+    QFont editFont("Microsoft YaHei", 10, QFont::Normal);
 
-    // 姓名
+    // 姓名编辑框
     QLabel *nameTitle = new QLabel("姓名：", contentFrame);
-    nameTitle->setFont(labelFont);
+    nameTitle->setFont(editFont);
     layout->addWidget(nameTitle);
-    nameLabel = new QLabel(contentFrame);
-    nameLabel->setStyleSheet(labelStyle);
-    nameLabel->setFont(labelFont);
-    layout->addWidget(nameLabel);
+    nameEdit = new QLineEdit(contentFrame);
+    nameEdit->setStyleSheet(editStyle);
+    nameEdit->setFont(editFont);
+    layout->addWidget(nameEdit);
 
-    // 电话
+    // 电话编辑框
     QLabel *numberTitle = new QLabel("电话：", contentFrame);
-    numberTitle->setFont(labelFont);
+    numberTitle->setFont(editFont);
     layout->addWidget(numberTitle);
-    numberLabel = new QLabel(contentFrame);
-    numberLabel->setStyleSheet(labelStyle);
-    numberLabel->setFont(labelFont);
-    layout->addWidget(numberLabel);
+    numberEdit = new QLineEdit(contentFrame);
+    numberEdit->setStyleSheet(editStyle);
+    numberEdit->setFont(editFont);
+    layout->addWidget(numberEdit);
 
-    // 组别
+    // 组别编辑框
     QLabel *groupTitle = new QLabel("组别：", contentFrame);
-    groupTitle->setFont(labelFont);
+    groupTitle->setFont(editFont);
     layout->addWidget(groupTitle);
-    groupLabel = new QLabel(contentFrame);
-    groupLabel->setStyleSheet(labelStyle);
-    groupLabel->setFont(labelFont);
-    layout->addWidget(groupLabel);
+    groupEdit = new QLineEdit(contentFrame);
+    groupEdit->setStyleSheet(editStyle);
+    groupEdit->setFont(editFont);
+    layout->addWidget(groupEdit);
 
-    // 邮箱
+    // 邮箱编辑框
     QLabel *emailTitle = new QLabel("邮箱：", contentFrame);
-    emailTitle->setFont(labelFont);
+    emailTitle->setFont(editFont);
     layout->addWidget(emailTitle);
-    emailLabel = new QLabel(contentFrame);
-    emailLabel->setStyleSheet(labelStyle);
-    emailLabel->setFont(labelFont);
-    layout->addWidget(emailLabel);
+    emailEdit = new QLineEdit(contentFrame);
+    emailEdit->setStyleSheet(editStyle);
+    emailEdit->setFont(editFont);
+    layout->addWidget(emailEdit);
 
-    // -------------------------- 4. 按钮（放在背景层上） --------------------------
-    // 左上角返回按钮
+    // 按钮布局
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
+    buttonLayout->setSpacing(20);
+    
+    // 保存按钮
+    saveButton = new QPushButton("保存", contentFrame);
+    saveButton->setStyleSheet(R"(
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 16px;
+    )");
+    saveButton->setFixedHeight(40);
+    buttonLayout->addWidget(saveButton);
+    
+    // 删除按钮
+    deleteButton = new QPushButton("删除联系人", contentFrame);
+    deleteButton->setStyleSheet(R"(
+        background-color: #f44336;
+        color: white;
+        border-radius: 6px;
+        padding: 8px 16px;
+        font-size: 16px;
+    )");
+    deleteButton->setFixedHeight(40);
+    buttonLayout->addWidget(deleteButton);
+    
+    layout->addLayout(buttonLayout);
+
+    // 返回按钮
     backButton = new QPushButton(backgroundLayer);
     backButton->setStyleSheet(R"(
         background-color: white;
@@ -105,39 +131,37 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     backButton->setFixedSize(50, 50);
     backButton->move(margin, margin);
 
-    // 右上角更多按钮
-    moreButton = new QPushButton(backgroundLayer);
-    moreButton->setStyleSheet(R"(
-        background-color: white;
-        border-radius: 4px;
-        border: 1px solid #d0b090;
-    )");
-    moreButton->setIcon(QIcon(":/res/picture/更多.png"));
-    moreButton->setIconSize(QSize(24, 36));
-    moreButton->setFixedSize(40, 60);
-    moreButton->move(width() - moreButton->width() - margin, margin);
-
-    // -------------------------- 5. 动画设置 --------------------------
+    // 动画
     animation = new QPropertyAnimation(this, "pos", this);
     animation->setDuration(300);
 
-    connect(backButton, &QPushButton::clicked, this, &InformationPage::backClicked);
-    connect(moreButton, &QPushButton::clicked, this, &InformationPage::moreClicked);
+    // 连接信号
+    connect(backButton, &QPushButton::clicked, this, &InformationPage::checkForChanges);
+    connect(saveButton, &QPushButton::clicked, this, &InformationPage::onSaveClicked);
+    connect(deleteButton, &QPushButton::clicked, this, &InformationPage::onDeleteClicked);
+    
+    // 监听编辑框变化
+    connect(nameEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
+    connect(numberEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
+    connect(groupEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
+    connect(emailEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
 }
 
 void InformationPage::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
     int margin = 20;
-    moreButton->move(width() - moreButton->width() - margin, margin);
+    backButton->move(margin, margin);
 }
 
 void InformationPage::showContactDetails(contact &contact)
 {
-    nameLabel->setText(contact.getname());
-    numberLabel->setText(contact.getnumber());
-    groupLabel->setText(contact.getgroup());
-    emailLabel->setText(contact.getemail());
+    originalContact = contact;
+    nameEdit->setText(contact.getname());
+    numberEdit->setText(contact.getnumber());
+    groupEdit->setText(contact.getgroup());
+    emailEdit->setText(contact.getemail());
+    hasChanges = false;
 }
 
 void InformationPage::slideIn()
@@ -161,6 +185,52 @@ void InformationPage::slideOut()
         disconnect(animation, &QPropertyAnimation::finished, this, nullptr);
     }, Qt::UniqueConnection);
     animation->start();
+}
+
+void InformationPage::onSaveClicked()
+{
+    contact modifiedContact(
+        nameEdit->text().trimmed(),
+        numberEdit->text().trimmed(),
+        groupEdit->text().trimmed(),
+        emailEdit->text().trimmed()
+    );
+    
+    emit saveContact(originalContact, modifiedContact);
+    hasChanges = false;
+}
+
+void InformationPage::onDeleteClicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "删除联系人", 
+                                 "确定要删除这个联系人吗？",
+                                 QMessageBox::Yes | QMessageBox::No);
+    
+    if (reply == QMessageBox::Yes) {
+        emit deleteContact(originalContact.getname());
+        slideOut();
+    }
+}
+
+void InformationPage::checkForChanges()
+{
+    if (hasChanges) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "保存修改", 
+                                     "内容已修改，是否保存？",
+                                     QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        
+        if (reply == QMessageBox::Save) {
+            onSaveClicked();
+            slideOut();
+        } else if (reply == QMessageBox::Discard) {
+            slideOut();
+        }
+        // 如果选择Cancel，则不做任何操作
+    } else {
+        slideOut();
+    }
 }
 
 InformationPage::~InformationPage()
