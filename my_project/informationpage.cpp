@@ -173,4 +173,92 @@ void InformationPage::showContactDetails(contact &contact)
 
 void InformationPage::slideIn()
 {
-    disconnect(animation, &QPropertyAnimation:
+    disconnect(animation, &QPropertyAnimation::finished, this, &QWidget::hide);
+    animation->stop();
+    animation->setStartValue(QPoint(parentWidget()->width(), 0));
+    animation->setEndValue(QPoint(0, 0));
+    animation->start();
+    show();
+}
+
+void InformationPage::slideOut()
+{
+    disconnect(animation, &QPropertyAnimation::finished, this, &QWidget::hide);
+    animation->stop();
+    animation->setStartValue(QPoint(0, 0));
+    animation->setEndValue(QPoint(parentWidget()->width(), 0));
+    connect(animation, &QPropertyAnimation::finished, this, [=](){
+        hide();
+        disconnect(animation, &QPropertyAnimation::finished, this, nullptr);
+    }, Qt::UniqueConnection);
+    animation->start();
+}
+
+void InformationPage::onSaveClicked()
+{
+    QString name = nameEdit->text().trimmed();
+    QString number = numberEdit->text().trimmed();
+
+    if (name.isEmpty() || number.isEmpty()) {
+        QMessageBox::warning(this, "保存失败", "姓名和电话不能为空！");
+        return;
+    }
+
+    contact modifiedContact(name, number, groupEdit->text().trimmed(), emailEdit->text().trimmed());
+    emit saveContact(originalContact, modifiedContact);
+    hasChanges = false;
+
+    // ✅ 清空输入框（重置为新建状态）
+    originalContact = contact(); // 清空原始联系人
+    nameEdit->clear();
+    numberEdit->clear();
+    groupEdit->clear();
+    emailEdit->clear();
+    deleteButton->hide(); // 隐藏删除按钮（因为是新建）
+
+    // ✅ 关闭页面
+    slideOut();
+}
+
+void InformationPage::onDeleteClicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "删除联系人", 
+                                 "确定要删除这个联系人吗？",
+                                 QMessageBox::Yes | QMessageBox::No);
+    
+    if (reply == QMessageBox::Yes) {
+        emit deleteContact(originalContact.getname());
+        slideOut();
+    }
+}
+
+void InformationPage::checkForChanges()
+{
+    if (hasChanges) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "保存修改",
+                                     "内容已修改，是否保存？",
+                                     QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+        if (reply == QMessageBox::Save) {
+            onSaveClicked();
+            slideOut();
+        } else if (reply == QMessageBox::Discard) {
+            // 如果是新联系人且选择放弃，不创建联系人
+            if(originalContact.getname().isEmpty()) {
+                // 不需要执行任何操作，联系人不会被创建
+            }
+            slideOut();
+        }
+        // 如果选择Cancel，则不做任何操作
+    } else {
+        // 如果是新联系人且没有修改，直接退出
+        slideOut();
+    }
+}
+
+InformationPage::~InformationPage()
+{
+    delete animation;
+}
