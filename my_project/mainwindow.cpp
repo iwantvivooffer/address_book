@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("小型通讯录");
     resize(500,750);
 
     // 从文件加载联系人数据
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     numberEdit=new QLineEdit;
     groupEdit=new QLineEdit;
     emailEdit=new QLineEdit;
+    searchEdit=new QLineEdit;
 
     //设置图标
     QPixmap namePixmap(":/res/picture/user.jpg");
@@ -60,6 +62,18 @@ MainWindow::MainWindow(QWidget *parent) :
     QPushButton*addbtn=new QPushButton("添加联系人");
     QPushButton*delbth=new QPushButton("删除联系人");
     QPushButton*filterbtn=new QPushButton("按组查看");
+    QPushButton*searchbtn=new QPushButton;
+
+    //搜索按键
+    QHBoxLayout *searchLayout = new QHBoxLayout;
+    searchbtn->setFixedSize(30,30);
+    QIcon searchIcon(":/res/picture/search.jpg");
+    searchbtn->setIcon(searchIcon);
+    searchbtn->setIconSize(QSize(30,30));
+    searchbtn->setFlat(true);
+    searchLayout->addWidget(searchEdit);
+    searchLayout->addWidget(searchbtn);
+    
 
     //毛玻璃效果
     QString blurStyle = R"(
@@ -97,6 +111,7 @@ MainWindow::MainWindow(QWidget *parent) :
     emailWidget = createInputRow(emailPixmap, "邮箱：", emailEdit);
 
     //输入展示
+    layout->addLayout(searchLayout);
     layout->addWidget(nameWidget);
     layout->addWidget(numberWidget);
     layout->addWidget(groupWidget);
@@ -112,12 +127,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(addbtn,&QPushButton::clicked,this,&MainWindow::onAddContact);
     connect(delbth,&QPushButton::clicked,this,&MainWindow::onDeleteContact);
     connect(filterbtn,&QPushButton::clicked,this,&MainWindow::onFilterGroup);
-connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
+    connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
+    connect(searchbtn, &QPushButton::clicked, this, &MainWindow::onSearchContact);
+
+    
     // 加载联系人到列表
     refreshContactList();
+    
     // 创建信息页面
-        infoPage = new InformationPage(this);
-        connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
+    infoPage = new InformationPage(this);
+    connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
 }
 
 // 刷新联系人列表
@@ -139,7 +158,6 @@ void MainWindow::paintEvent(QPaintEvent *)
     }
 }
 
-//槽函数实现
 //添加联系人
 void MainWindow::onAddContact(){
     QString name=nameEdit->text();
@@ -198,6 +216,22 @@ void MainWindow::onFilterGroup(){
         contactlist->addItem(QString("%1        %2").arg(c.getname(),c.getgroup()));
     }
 }
+
+//搜索
+void MainWindow::onSearchContact() {
+    QString filter = searchEdit->text();
+    refreshContactListFiltered(filter);
+}
+void MainWindow::refreshContactListFiltered(const QString &filter) {
+    contactlist->clear();
+    QList<contact> all = m_contact.getcontacts();
+    for (contact &c : all) {
+        if (filter.isEmpty() || c.getname().contains(filter, Qt::CaseInsensitive)) {
+            contactlist->addItem(QString("%1").arg(c.getname()));
+        }
+    }
+}
+
 
 // 处理联系人列表项点击事件
 void MainWindow::onContactItemClicked(QListWidgetItem *item)
