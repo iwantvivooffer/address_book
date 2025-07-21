@@ -60,7 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //按键
     QPushButton*addbtn=new QPushButton("添加联系人");
-    QPushButton*delbth=new QPushButton("删除联系人");
     QPushButton*filterbtn=new QPushButton("按组查看");
     QPushButton*searchbtn=new QPushButton;
 
@@ -137,8 +136,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // 创建信息页面
     infoPage = new InformationPage(this);
     connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
+    connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
+    connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
 }
-
+    
 // 刷新联系人列表
 void MainWindow::refreshContactList() {
     contactlist->clear();
@@ -182,22 +183,6 @@ void MainWindow::onAddContact(){
     numberEdit->clear();
     groupEdit->clear();
     emailEdit->clear();
-}
-
-//删除联系人
-void MainWindow::onDeleteContact(){
-    QListWidgetItem*item=contactlist->currentItem();
-    if(!item){
-        QMessageBox::warning(this, "删除错误", "请先选择一个联系人");
-        return;
-    }
-
-    QString name=item->text().split(" ").first();
-    if(m_contact.deletecontact(name)){
-        delete item;
-        // 删除后保存联系人
-        m_contact.saveToJson(path);
-    }
 }
 
 
@@ -244,6 +229,39 @@ void MainWindow::onContactItemClicked(QListWidgetItem *item)
             infoPage->slideIn();
             break;
         }
+    }
+}
+// 保存联系人修改
+void MainWindow::onSaveContact(contact original, contact modified) {
+    // 删除原联系人
+    QString originalName = original.getname();
+    m_contact.deletecontact(originalName);
+    
+    // 添加修改后的联系人
+    m_contact.addcontact(modified);
+    
+    // 保存到文件
+    m_contact.saveToJson(path);
+    
+    // 刷新列表
+    refreshContactList();
+    
+    QMessageBox::information(this, "保存成功", "联系人信息已更新");
+}
+
+// 删除联系人
+void MainWindow::onDeleteContact(QString name) {
+    // 删除联系人
+    if(m_contact.deletecontact(name)) {
+        // 保存到文件
+        m_contact.saveToJson(path);
+        
+        // 刷新列表
+        refreshContactList();
+        
+        QMessageBox::information(this, "删除成功", "联系人已删除");
+    } else {
+        QMessageBox::warning(this, "删除失败", "未找到该联系人");
     }
 }
 
