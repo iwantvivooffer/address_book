@@ -162,78 +162,15 @@ void InformationPage::showContactDetails(contact &contact)
     groupEdit->setText(contact.getgroup());
     emailEdit->setText(contact.getemail());
     hasChanges = false;
+
+    // 如果是新联系人，隐藏删除按钮
+        if(contact.getname().isEmpty()) {
+            deleteButton->hide();
+        } else {
+            deleteButton->show();
+        }
 }
 
 void InformationPage::slideIn()
 {
-    disconnect(animation, &QPropertyAnimation::finished, this, &QWidget::hide);
-    animation->stop();
-    animation->setStartValue(QPoint(parentWidget()->width(), 0));
-    animation->setEndValue(QPoint(0, 0));
-    animation->start();
-    show();
-}
-
-void InformationPage::slideOut()
-{
-    disconnect(animation, &QPropertyAnimation::finished, this, &QWidget::hide);
-    animation->stop();
-    animation->setStartValue(QPoint(0, 0));
-    animation->setEndValue(QPoint(parentWidget()->width(), 0));
-    connect(animation, &QPropertyAnimation::finished, this, [=](){
-        hide();
-        disconnect(animation, &QPropertyAnimation::finished, this, nullptr);
-    }, Qt::UniqueConnection);
-    animation->start();
-}
-
-void InformationPage::onSaveClicked()
-{
-    contact modifiedContact(
-        nameEdit->text().trimmed(),
-        numberEdit->text().trimmed(),
-        groupEdit->text().trimmed(),
-        emailEdit->text().trimmed()
-    );
-    
-    emit saveContact(originalContact, modifiedContact);
-    hasChanges = false;
-}
-
-void InformationPage::onDeleteClicked()
-{
-    QMessageBox::StandardButton reply;
-    reply = QMessageBox::question(this, "删除联系人", 
-                                 "确定要删除这个联系人吗？",
-                                 QMessageBox::Yes | QMessageBox::No);
-    
-    if (reply == QMessageBox::Yes) {
-        emit deleteContact(originalContact.getname());
-        slideOut();
-    }
-}
-
-void InformationPage::checkForChanges()
-{
-    if (hasChanges) {
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question(this, "保存修改", 
-                                     "内容已修改，是否保存？",
-                                     QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        
-        if (reply == QMessageBox::Save) {
-            onSaveClicked();
-            slideOut();
-        } else if (reply == QMessageBox::Discard) {
-            slideOut();
-        }
-        // 如果选择Cancel，则不做任何操作
-    } else {
-        slideOut();
-    }
-}
-
-InformationPage::~InformationPage()
-{
-    delete animation;
-}
+    disconnect(animation, &QPropertyAnimation:
