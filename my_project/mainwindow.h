@@ -13,11 +13,11 @@
 #include<QPixmap>
 #include<QStackedWidget>
 #include<QCoreApplication>
-
+#include<QMessageBox>
 
 #include"contactmanager.h"
 #include"contact.h"
-
+#include"informationpage.h"
 namespace Ui {
 class MainWindow;
 }
@@ -56,6 +56,9 @@ private:
     //展示框
     QListWidget*contactlist;
 
+// 添加信息页面指针
+InformationPage *infoPage; 
+
     // 添加刷新列表函数
     void refreshContactList();
 
@@ -63,6 +66,8 @@ public slots:
     void onAddContact();
     void onDeleteContact();
     void onFilterGroup();
+void onContactItemClicked(QListWidgetItem *item); 
+        void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
 };
 
 #endif // MAINWINDOW_H
