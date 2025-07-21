@@ -19,6 +19,9 @@ public:
     void addcontact(contact&contact);
     bool deletecontact(const QString&name);
 
+    //排序
+    void sortContactsByName();
+
     //获取联系人们
     QList<contact> getcontacts();
     QList<contact> getcontactsByGroup(QString&group);
