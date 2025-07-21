@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QPropertyAnimation>
+#include <QLineEdit>
+#include <QMessageBox>
 #include "contact.h"
 
 class InformationPage : public QWidget
@@ -21,16 +23,27 @@ public:
     void showEvent(QShowEvent *event) override;
 signals:
     void backClicked();
-    void moreClicked();
+    void saveContact(contact original, contact modified);
+    void deleteContact(QString name);
+
+private slots:
+    void onSaveClicked();
+    void onDeleteClicked();
+    void checkForChanges();
 
 private:
-    QLabel *nameLabel;
-    QLabel *numberLabel;
-    QLabel *groupLabel;
-    QLabel *emailLabel;
+    contact originalContact;
+    QLineEdit *nameEdit;
+    QLineEdit *numberEdit;
+    QLineEdit *groupEdit;
+    QLineEdit *emailEdit;
+    
     QPushButton *backButton;
-    QPushButton *moreButton;
+    QPushButton *saveButton;
+    QPushButton *deleteButton;
     QPropertyAnimation *animation;
+    
+    bool hasChanges = false;
 };
 
 #endif // INFORMATIONPAGE_H
