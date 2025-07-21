@@ -14,6 +14,7 @@
 #include<QStackedWidget>
 #include<QCoreApplication>
 #include<QMessageBox>
+#include<QComboBox>
 
 #include"contactmanager.h"
 #include"contact.h"
@@ -62,7 +63,7 @@ private:
 
     // 添加刷新列表函数
     void refreshContactList();
-    void refreshContactListFiltered(const QString &filter);
+    void refreshContactListFiltered(const QString &filter,const QString&field);
 
 
 public slots:
