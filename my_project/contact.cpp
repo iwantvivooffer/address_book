@@ -8,16 +8,16 @@ contact::contact(const QString &name, const QString &number, const QString &grou
     : name(name), number(number), group(group), email(email){}
 
 //获取信息
-QString contact::getemail() const{
+QString contact::getemail() const {
     return email;
 }
-QString contact::getgroup() const{
+QString contact::getgroup() const {
     return group;
 }
-QString contact::getname() const{
+QString contact::getname() const {
     return name;
 }
-QString contact::getnumber() const{
+QString contact::getnumber() const {
     return number;
 }
 
