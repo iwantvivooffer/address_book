@@ -1,4 +1,4 @@
-#ifndef INFORMATIONPAGE_H
+ #ifndef INFORMATIONPAGE_H
 #define INFORMATIONPAGE_H
 
 #include <QWidget>
