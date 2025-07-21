@@ -1,6 +1,7 @@
 #include "contactmanager.h"
 #include <QFile>
 #include <QJsonDocument>
+#include <QDebug>
 
 contactManager::contactManager()
 {
@@ -65,5 +66,6 @@ void contactManager::loadFromJson(const QString &filename) {
         QJsonObject obj = val.toObject();
         contacts.append(contact::fromJson(obj));
     }
+    qDebug() << "Loaded" << contacts.size() << "contacts from" << filename;
 }
 
