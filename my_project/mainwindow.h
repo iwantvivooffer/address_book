@@ -19,6 +19,7 @@
 #include"contactmanager.h"
 #include"contact.h"
 #include"informationpage.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -43,20 +44,18 @@ private:
     contactManager m_contact;
 
     //编辑输入
-   QLineEdit*nameEdit;
-   QLineEdit*numberEdit;
-   QLineEdit*groupEdit;
-   QLineEdit*emailEdit;
-   QLineEdit*searchEdit;
+    QLineEdit*nameEdit;
+    QLineEdit*numberEdit;
+    QLineEdit*groupEdit;
+    QLineEdit*emailEdit;
+    QLineEdit*searchEdit;
 
     //部件定义
-   QWidget*nameWidget;
+    QWidget*nameWidget;
     QWidget*numberWidget;
-   QWidget*groupWidget;
+    QWidget*groupWidget;
     QWidget*emailWidget;
 
-    //添加按钮
-QPushButton* addButton;
     //下拉菜单
     QComboBox*searchCombo;
 
@@ -64,21 +63,20 @@ QPushButton* addButton;
     QListWidget*contactlist;
 
     // 添加信息页面指针
-    InformationPage *infoPage; 
+    InformationPage *infoPage;
 
     // 添加刷新列表函数
     void refreshContactList();
     void refreshContactListFiltered(const QString &filter,const QString&field);
 
-
 public slots:
-    void onAddContact();
     void onDeleteContact(QString name);
     void onSearchContact();
-    void onContactItemClicked(QListWidgetItem *item); 
-    void onInfoPageBackClicked(); // 添加返回按钮点击槽函数
-   void onSaveContact(contact original, contact modified);
-   void onAddButtonClicked();
+    void onContactItemClicked(QListWidgetItem *item);
+    void onInfoPageBackClicked(); // 返回按钮点击槽函数
+    void onSaveContact(const contact original,const contact modified);
+    void onAddButtonClicked();
+
 };
 
 #endif // MAINWINDOW_H
