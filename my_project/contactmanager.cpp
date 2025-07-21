@@ -11,7 +11,7 @@ contactManager::contactManager()
 void contactManager::addcontact(contact &contact){
     contacts.append(contact);
 }
-bool contactManager::deletecontact(QString &name){
+bool contactManager::deletecontact(const QString &name){
     for(int i = 0; i < contacts.size(); ++i){
         if (contacts[i].getname() == name) {
             contacts.removeAt(i);
