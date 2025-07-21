@@ -3,6 +3,7 @@
 #include <QPixmap>
 #include <QShowEvent>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QDebug>
 #include <QHBoxLayout>
 
@@ -53,41 +54,68 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
 
     QFont editFont("Microsoft YaHei", 10, QFont::Normal);
 
-    // 姓名编辑框
+    // --- 姓名行 ---
+    QHBoxLayout *nameLayout = new QHBoxLayout();
+    QLabel *nameIcon = new QLabel(contentFrame);
+    nameIcon->setPixmap(QPixmap(":/res/picture/user.jpg").scaled(50, 50, Qt::KeepAspectRatio));
     QLabel *nameTitle = new QLabel("姓名：", contentFrame);
     nameTitle->setFont(editFont);
-    layout->addWidget(nameTitle);
     nameEdit = new QLineEdit(contentFrame);
     nameEdit->setStyleSheet(editStyle);
     nameEdit->setFont(editFont);
-    layout->addWidget(nameEdit);
 
-    // 电话编辑框
+    nameLayout->addWidget(nameIcon);
+    nameLayout->addWidget(nameTitle);
+    nameLayout->addWidget(nameEdit);
+    layout->addLayout(nameLayout); // 将姓名行添加到主布局
+
+    // --- 电话行 ---
+    QHBoxLayout *numberLayout = new QHBoxLayout();
+    QLabel *numberIcon = new QLabel(contentFrame);
+    numberIcon->setPixmap(QPixmap(":/res/picture/phone.png").scaled(50, 50, Qt::KeepAspectRatio));
     QLabel *numberTitle = new QLabel("电话：", contentFrame);
     numberTitle->setFont(editFont);
-    layout->addWidget(numberTitle);
     numberEdit = new QLineEdit(contentFrame);
     numberEdit->setStyleSheet(editStyle);
     numberEdit->setFont(editFont);
-    layout->addWidget(numberEdit);
 
-    // 组别编辑框
+    numberLayout->addWidget(numberIcon);
+    numberLayout->addWidget(numberTitle);
+    numberLayout->addWidget(numberEdit);
+    layout->addLayout(numberLayout); // 将电话行添加到主布局
+
+    // --- 组别行 ---
+    QHBoxLayout *groupLayout = new QHBoxLayout();
+    QLabel *groupIcon = new QLabel(contentFrame);
+    groupIcon->setPixmap(QPixmap(":/res/picture/friend.jpg").scaled(50, 50, Qt::KeepAspectRatio));
     QLabel *groupTitle = new QLabel("组别：", contentFrame);
     groupTitle->setFont(editFont);
-    layout->addWidget(groupTitle);
     groupEdit = new QLineEdit(contentFrame);
     groupEdit->setStyleSheet(editStyle);
     groupEdit->setFont(editFont);
-    layout->addWidget(groupEdit);
 
-    // 邮箱编辑框
+    groupLayout->addWidget(groupIcon);
+    groupLayout->addWidget(groupTitle);
+    groupLayout->addWidget(groupEdit);
+    layout->addLayout(groupLayout); // 将组别行添加到主布局
+
+    // --- 邮箱行 ---
+    QHBoxLayout *emailLayout = new QHBoxLayout();
+    QLabel *emailIcon = new QLabel(contentFrame);
+    emailIcon->setPixmap(QPixmap(":/res/picture/emile.png").scaled(50, 50, Qt::KeepAspectRatio));
     QLabel *emailTitle = new QLabel("邮箱：", contentFrame);
     emailTitle->setFont(editFont);
-    layout->addWidget(emailTitle);
     emailEdit = new QLineEdit(contentFrame);
     emailEdit->setStyleSheet(editStyle);
     emailEdit->setFont(editFont);
-    layout->addWidget(emailEdit);
+
+    emailLayout->addWidget(emailIcon);
+    emailLayout->addWidget(emailTitle);
+    emailLayout->addWidget(emailEdit);
+    layout->addLayout(emailLayout); // 将邮箱行添加到主布局
+
+    // 增加一个弹性空间，让按钮布局下沉
+    layout->addStretch();
 
     // 按钮布局
     QHBoxLayout *buttonLayout = new QHBoxLayout();
@@ -139,6 +167,10 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     connect(backButton, &QPushButton::clicked, this, &InformationPage::checkForChanges);
     connect(saveButton, &QPushButton::clicked, this, &InformationPage::onSaveClicked);
     connect(deleteButton, &QPushButton::clicked, this, &InformationPage::onDeleteClicked);
+    connect(nameEdit, &QLineEdit::returnPressed, this, &InformationPage::onSaveClicked);
+    connect(numberEdit, &QLineEdit::returnPressed, this, &InformationPage::onSaveClicked);
+    connect(groupEdit, &QLineEdit::returnPressed, this, &InformationPage::onSaveClicked);
+    connect(emailEdit, &QLineEdit::returnPressed, this, &InformationPage::onSaveClicked);
 
     // 监听编辑框变化
     connect(nameEdit, &QLineEdit::textChanged, this, [this](){ hasChanges = true; });
