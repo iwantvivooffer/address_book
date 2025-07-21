@@ -60,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //按键
     QPushButton*addbtn=new QPushButton("添加联系人");
-    QPushButton*filterbtn=new QPushButton("按组查看");
-    QPushButton*delbtn=new QPushButton("删除联系人");
     QPushButton*searchbtn=new QPushButton;
 
     //搜索菜单
@@ -82,7 +80,8 @@ MainWindow::MainWindow(QWidget *parent) :
     searchLayout->addWidget(searchbtn);
     searchLayout->addWidget(searchCombo);
     searchLayout->addWidget(searchEdit);
-    
+
+
 
     //毛玻璃效果
     QString blurStyle = R"(
@@ -96,13 +95,12 @@ MainWindow::MainWindow(QWidget *parent) :
     numberEdit->setStyleSheet(blurStyle);
     groupEdit->setStyleSheet(blurStyle);
     emailEdit->setStyleSheet(blurStyle);
+    searchEdit->setStyleSheet(blurStyle);
 
     layout->setContentsMargins(20, 20, 20, 20);
     layout->setSpacing(15);
 
     addbtn->setStyleSheet(blurStyle);
-    delbth->setStyleSheet(blurStyle);
-    filterbtn->setStyleSheet(blurStyle);
 
     //list
     contactlist=new QListWidget;
@@ -119,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     groupWidget = createInputRow(groupPixmap, "组别：", groupEdit);
     emailWidget = createInputRow(emailPixmap, "邮箱：", emailEdit);
 
+
     //输入展示
     layout->addLayout(searchLayout);
     layout->addWidget(nameWidget);
@@ -126,16 +125,13 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addWidget(groupWidget);
     layout->addWidget(emailWidget);
     layout->addWidget(addbtn);
-    layout->addWidget(delbth);
-    layout->addWidget(filterbtn);
     layout->addWidget(contactlist);
+
 
     setCentralWidget(central);
 
     //connect
     connect(addbtn,&QPushButton::clicked,this,&MainWindow::onAddContact);
-    connect(delbth,&QPushButton::clicked,this,&MainWindow::onDeleteContact);
-    connect(filterbtn,&QPushButton::clicked,this,&MainWindow::onFilterGroup);
     connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
     connect(searchbtn, &QPushButton::clicked, this, &MainWindow::onSearchContact);
     connect(searchEdit, &QLineEdit::returnPressed, this, &MainWindow::onSearchContact);
@@ -143,23 +139,24 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(numberEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
     connect(emailEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
     connect(groupEdit, &QLineEdit::returnPressed, this, &MainWindow::onAddContact);
-    
+
+
     // 加载联系人到列表
     refreshContactList();
-    
+
     // 创建信息页面
     infoPage = new InformationPage(this);
-    connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
-    connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
-    connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
+        connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
+        connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
+        connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
 }
-    
+
 // 刷新联系人列表
 void MainWindow::refreshContactList() {
     contactlist->clear();
     QList<contact> all = m_contact.getcontacts();
     for(auto &c : all) {
-        contactlist->addItem(QString("%1                         %2").arg(c.getname(), c.getgroup()));
+        contactlist->addItem(QString("%1").arg(c.getname()));
     }
 }
 
@@ -172,6 +169,7 @@ void MainWindow::paintEvent(QPaintEvent *)
         painter.drawPixmap(this->rect(), bg); // 自动缩放图片填满整个窗口
     }
 }
+
 
 //添加联系人
 void MainWindow::onAddContact(){
@@ -199,22 +197,41 @@ void MainWindow::onAddContact(){
     emailEdit->clear();
 }
 
+// 保存联系人修改
+void MainWindow::onSaveContact(contact original, contact modified) {
+    // 删除原联系人
+    QString originalName = original.getname();
+    m_contact.deletecontact(originalName);
 
-//按照组别过滤
-void MainWindow::onFilterGroup(){
-    QString group=groupEdit->text();
-    if(group.isEmpty()) {
-            refreshContactList();  // 如果组名为空，显示所有联系人
-            return;
-        }
-    contactlist->clear();
+    // 添加修改后的联系人
+    m_contact.addcontact(modified);
 
-    //目标数组
-    QList<contact> target=m_contact.getcontactsByGroup(group);
-    for(auto &c:target){
-        contactlist->addItem(QString("%1        %2").arg(c.getname(),c.getgroup()));
+    // 保存到文件
+    m_contact.saveToJson(path);
+
+    // 刷新列表
+    refreshContactList();
+
+    QMessageBox::information(this, "保存成功", "联系人信息已更新");
+}
+
+//删除联系人
+void MainWindow::onDeleteContact(){
+    QListWidgetItem*item=contactlist->currentItem();
+    if(!item){
+        QMessageBox::warning(this, "删除错误", "请先选择一个联系人");
+        return;
+    }
+
+    QString name=item->text().split(" ").first();
+    if(m_contact.deletecontact(name)){
+        delete item;
+        // 删除后保存联系人
+        m_contact.saveToJson(path);
     }
 }
+
+
 
 //搜索
 void MainWindow::onSearchContact() {
@@ -261,39 +278,7 @@ void MainWindow::onContactItemClicked(QListWidgetItem *item)
         }
     }
 }
-// 保存联系人修改
-void MainWindow::onSaveContact(contact original, contact modified) {
-    // 删除原联系人
-    QString originalName = original.getname();
-    m_contact.deletecontact(originalName);
-    
-    // 添加修改后的联系人
-    m_contact.addcontact(modified);
-    
-    // 保存到文件
-    m_contact.saveToJson(path);
-    
-    // 刷新列表
-    refreshContactList();
-    
-    QMessageBox::information(this, "保存成功", "联系人信息已更新");
-}
 
-// 删除联系人
-void MainWindow::onDeleteContact(QString name) {
-    // 删除联系人
-    if(m_contact.deletecontact(name)) {
-        // 保存到文件
-        m_contact.saveToJson(path);
-        
-        // 刷新列表
-        refreshContactList();
-        
-        QMessageBox::information(this, "删除成功", "联系人已删除");
-    } else {
-        QMessageBox::warning(this, "删除失败", "未找到该联系人");
-    }
-}
 
 // 处理信息页面返回按钮点击事件
 void MainWindow::onInfoPageBackClicked()
