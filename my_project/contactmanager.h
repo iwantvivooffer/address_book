@@ -17,7 +17,7 @@ public:
     contactManager();
     //增删联系人
     void addcontact(contact&contact);
-    bool deletecontact(QString&name);
+    bool deletecontact(const QString&name);
 
     //获取联系人们
     QList<contact> getcontacts();
