@@ -1,7 +1,6 @@
 #include "contactmanager.h"
 #include <QFile>
 #include <QJsonDocument>
-#include <QDebug>
 #include<algorithm>
 #include<QCollator>
 
@@ -10,9 +9,11 @@ contactManager::contactManager()
 }
 
 //增删联系人
-void contactManager::addcontact(contact &contact){
+void contactManager::addcontact(const contact &contact){
+
     contacts.append(contact);
     sortContactsByName();//添加信息后马上就排序
+
 }
 bool contactManager::deletecontact(const QString &name){
     for(int i = 0; i < contacts.size(); ++i){
@@ -38,8 +39,11 @@ void contactManager::sortContactsByName()
 
 //获取联系人
 QList<contact> contactManager::getcontacts(){
+
     return contacts;
+
 }
+
 QList<contact> contactManager::getcontactsByGroup(QString &group){
     QList<contact> result;
     for (auto &c : contacts) {
@@ -81,7 +85,8 @@ void contactManager::loadFromJson(const QString &filename) {
         QJsonObject obj = val.toObject();
         contacts.append(contact::fromJson(obj));
     }
-    
+
     sortContactsByName();
+
 }
 
