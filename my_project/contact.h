@@ -26,9 +26,9 @@ public:
 
     //获取信息
     QString getname() const ;
-    QString getnumber() const;
-    QString getgroup() const;
-    QString getemail() const;
+    QString getnumber()const ;
+    QString getgroup() const ;
+    QString getemail() const ;
 
     // 序列化成 QJsonObject
     QJsonObject toJson() const;
@@ -38,4 +38,3 @@ public:
 };
 
 #endif // CONTACT_H
-
