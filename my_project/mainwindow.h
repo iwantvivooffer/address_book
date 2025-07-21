@@ -55,6 +55,9 @@ private:
     QWidget*groupWidget;
     QWidget*emailWidget;
 
+    //下拉菜单
+    QComboBox*searchCombo;
+
     //展示框
     QListWidget*contactlist;
 
