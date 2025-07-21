@@ -79,17 +79,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //list
     contactlist=new QListWidget;
     contactlist->setStyleSheet(R"(
-        background-color: rgba(255, 255, 255, 120);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 80);
-        color: black;
-    )");
-    contactlist->setStyleSheet(R"(
         QListWidget::item {
             border-bottom: 1px solid gray;
             padding: 5px;
         }
-    )");//分割线
+    )");
 
 
 
@@ -123,19 +117,18 @@ void MainWindow::refreshContactList() {
 
     contactlist->clear();
 
-    // 先排序（可选，确保刷新时已排序）
+    // 排序
     m_contact.sortContactsByName();
 
+    QFont itemFont("方正舒体", 20);
+    
     QList<contact> all = m_contact.getcontacts();
     for(auto &c : all) {
         QString text = QString("%1\n%2").arg(c.getname()).arg(c.getnumber());
         QListWidgetItem* item = new QListWidgetItem(text);
 
-        QFont font;
-        font.setPointSize(10);
-        item->setFont(font);
-
-        item->setSizeHint(QSize(0, 60));
+        item->setFont(itemFont);
+        item->setSizeHint(QSize(0, 100));
 
         contactlist->addItem(item);
     }
