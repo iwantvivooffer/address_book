@@ -5,7 +5,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDebug>
-#include <QHBoxLayout>
 
 InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
 {
@@ -290,6 +289,90 @@ void InformationPage::checkForChanges()
         slideOut();
     }
 }
+// 设置暗色模式
+void InformationPage::setDarkMode(bool darkMode)
+{
+    isDarkMode = darkMode;
+    
+    QString bgColor, frameColor, editStyle, saveButtonStyle, deleteButtonStyle, backButtonStyle;
+    
+    if (darkMode) {
+        bgColor = "#2D2D30";
+        frameColor = "#252526";
+        editStyle = R"(
+            background-color: #3C3C3C;
+            border: 1px solid #3F3F46;
+            color: #FFFFFF;
+            border-radius: 6px;
+            padding: 8px 12px;
+            min-height: 30px;
+            font-size: 16px;
+        )";
+        saveButtonStyle = R"(
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 16px;
+        )";
+        deleteButtonStyle = R"(
+            background-color: #f44336;
+            color: white;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 16px;
+        )";
+        backButtonStyle = R"(
+            background-color: #3C3C3C;
+            border-radius: 4px;
+            border: 1px solid #3F3F46;
+        )";
+    } else {
+        bgColor = "#f5deb3";
+        frameColor = "white";
+        editStyle = R"(
+            background-color: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            color: #333;
+            border-radius: 6px;
+            padding: 8px 12px;
+            min-height: 30px;
+            font-size: 16px;
+        )";
+        saveButtonStyle = R"(
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 16px;
+        )";
+        deleteButtonStyle = R"(
+            background-color: #f44336;
+            color: white;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 16px;
+        )";
+        backButtonStyle = R"(
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #d0b090;
+        )";
+    }
+    // 应用样式
+    findChild<QWidget*>("")->setStyleSheet(QString("background-color: %1;").arg(bgColor));
+    findChild<QWidget*>("")->setStyleSheet(QString("background-color: %1; border: 1px solid #d0b090; border-radius: 8px;").arg(frameColor));
+    
+    nameEdit->setStyleSheet(editStyle);
+    numberEdit->setStyleSheet(editStyle);
+    groupEdit->setStyleSheet(editStyle);
+    emailEdit->setStyleSheet(editStyle);
+    
+    saveButton->setStyleSheet(saveButtonStyle);
+    deleteButton->setStyleSheet(deleteButtonStyle);
+    backButton->setStyleSheet(backButtonStyle);
+}
+
 
 InformationPage::~InformationPage()
 {
