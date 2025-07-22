@@ -195,6 +195,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(searchBtn, &QPushButton::clicked, this, &MainWindow::onSearchContact);
     connect(searchEdit, &QLineEdit::returnPressed, this, &MainWindow::onSearchContact);
     connect(langButton, &QPushButton::clicked, this, &MainWindow::toggleLanguage);
+    connect(modeToggleButton,&QPushButton::clicked,this,&MainWindow::toggleDarkMode);
 
     // 加载联系人到列表
     refreshContactList();
