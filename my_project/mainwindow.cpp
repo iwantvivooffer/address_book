@@ -9,6 +9,9 @@
 #include<QFont>
 #include<QDebug>
 #include <QStyle>
+#include <QIcon>
+#include <QPixmap>
+
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -59,12 +62,21 @@ MainWindow::MainWindow(QWidget *parent) :
     addButton->setToolTip("添加新联系人");
     // 光暗切换按钮
     modeToggleButton = new QPushButton(this);
-    modeToggleButton->setFixedSize(30,30);
-    QIcon modeIcon(":/res/picture/光暗转换.png");  // 确保资源中有这个图片
+    modeToggleButton->setFixedSize(40, 40);  // 稍微大一些更美观
+    QIcon modeIcon(":/res/picture/光暗转换.png");
     modeToggleButton->setIcon(modeIcon);
-    modeToggleButton->setIconSize(QSize(25,25));
-    modeToggleButton->setFlat(true);
-    modeToggleButton->setToolTip("切换光暗模式");
+    modeToggleButton->setIconSize(QSize(35, 35));  // 贴边但不溢出
+    modeToggleButton->setFlat(true);  // 去边框
+    modeToggleButton->setStyleSheet(R"(
+        QPushButton {
+            background-color: transparent;
+            border: none;
+        }
+        QPushButton:hover {
+            background-color: rgba(0, 0, 0, 0.05);  /* 鼠标悬停轻微高亮 */
+            border-radius: 6px;
+        }
+    )");
 
     searchbtn->setFlat(true);
     searchLayout->addWidget(searchbtn);
@@ -72,6 +84,7 @@ MainWindow::MainWindow(QWidget *parent) :
     searchLayout->addWidget(searchEdit);
     searchLayout->addStretch(); // 添加弹性空间
     searchLayout->addWidget(addButton); //按钮加到布局里
+    searchLayout->addWidget(modeToggleButton);
 
     //毛玻璃效果
     QString blurStyle = R"(
@@ -118,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(contactlist, &QListWidget::itemClicked, this, &MainWindow::onContactItemClicked); // 连接联系人列表点击信号
     connect(searchbtn, &QPushButton::clicked, this, &MainWindow::onSearchContact);
     connect(searchEdit, &QLineEdit::returnPressed, this, &MainWindow::onSearchContact);
+    connect(modeToggleButton, &QPushButton::clicked, this, &MainWindow::toggleDarkMode);
 
 
     // 加载联系人到列表
@@ -306,13 +320,13 @@ void MainWindow::onInfoPageBackClicked()
 void MainWindow::toggleDarkMode()
 {
     isDarkMode = !isDarkMode;
-    
+
     if (isDarkMode) {
         applyDarkMode();
     } else {
         applyLightMode();
     }
-    
+
     // 刷新界面
     update();
 }
@@ -362,7 +376,7 @@ void MainWindow::applyDarkMode()
             border-radius: 6px;
         }
     )");
-    
+
     // 更新信息页面样式
     if (infoPage) {
         infoPage->setDarkMode(true);
@@ -374,7 +388,7 @@ void MainWindow::applyLightMode()
 {
     // 恢复默认样式
     setStyleSheet("");
-    
+
     // 重新应用搜索框样式
     QString blurStyle = R"(
         background-color: rgba(255, 255, 255, 120);
@@ -384,7 +398,7 @@ void MainWindow::applyLightMode()
         color: black;
     )";
     searchEdit->setStyleSheet(blurStyle);
-    
+
     // 更新信息页面样式
     if (infoPage) {
         infoPage->setDarkMode(false);
