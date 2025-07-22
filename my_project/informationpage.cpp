@@ -290,24 +290,24 @@ void InformationPage::checkForChanges()
     }
 }
 // 设置暗色模式
-void InformationPage::setDarkMode(bool darkMode)
-{
-    isDarkMode = darkMode;
-    
-    QString bgColor, frameColor, editStyle, saveButtonStyle, deleteButtonStyle, backButtonStyle;
-    
-    if (darkMode) {
-        bgColor = "#2D2D30";
-        frameColor = "#252526";
-        editStyle = R"(
-            background-color: #3C3C3C;
-            border: 1px solid #3F3F46;
-            color: #FFFFFF;
-            border-radius: 6px;
-            padding: 8px 12px;
-            min-height: 30px;
-            font-size: 16px;
-        )";
+ void InformationPage::setDarkMode(bool darkMode)
+    {
+        isDarkMode = darkMode;
+
+        QString bgColor, frameColor, editStyle, saveButtonStyle, deleteButtonStyle, backButtonStyle;
+
+        if (darkMode) {
+            bgColor = "#2D2D30";  // 与主窗口暗色背景一致
+            frameColor = "#252526";  // 与主窗口内容区暗色背景一致
+            editStyle = R"(
+                background-color: #3C3C3C;
+                border: 1px solid #3F3F46;
+                color: #FFFFFF;
+                border-radius: 6px;
+                padding: 8px 12px;
+                min-height: 30px;
+                font-size: 16px;
+            )";
         saveButtonStyle = R"(
             background-color: #4CAF50;
             color: white;
@@ -359,19 +359,35 @@ void InformationPage::setDarkMode(bool darkMode)
             border: 1px solid #d0b090;
         )";
     }
-    // 应用样式
-    findChild<QWidget*>("")->setStyleSheet(QString("background-color: %1;").arg(bgColor));
-    findChild<QWidget*>("")->setStyleSheet(QString("background-color: %1; border: 1px solid #d0b090; border-radius: 8px;").arg(frameColor));
-    
-    nameEdit->setStyleSheet(editStyle);
-    numberEdit->setStyleSheet(editStyle);
-    groupEdit->setStyleSheet(editStyle);
-    emailEdit->setStyleSheet(editStyle);
-    
-    saveButton->setStyleSheet(saveButtonStyle);
-    deleteButton->setStyleSheet(deleteButtonStyle);
-    backButton->setStyleSheet(backButtonStyle);
-}
+        // 背景层
+            QWidget* backgroundLayer = this->findChild<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
+            if (backgroundLayer) {
+                backgroundLayer->setStyleSheet(QString("background-color: %1;").arg(bgColor));
+            }
+
+            // 内容框
+            QWidget* contentFrame = backgroundLayer ? backgroundLayer->findChild<QWidget*>(QString(), Qt::FindDirectChildrenOnly) : nullptr;
+            if (contentFrame) {
+                contentFrame->setStyleSheet(QString(
+                    "background-color: %1;"
+                    "border: 1px solid %2;"
+                    "border-radius: 8px;"
+                    "box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);"
+                ).arg(frameColor).arg(darkMode ? "#3F3F46" : "#d0b090"));
+            }
+
+            // 应用其他样式
+            nameEdit->setStyleSheet(editStyle);
+            numberEdit->setStyleSheet(editStyle);
+            groupEdit->setStyleSheet(editStyle);
+            emailEdit->setStyleSheet(editStyle);
+
+            saveButton->setStyleSheet(saveButtonStyle);
+            deleteButton->setStyleSheet(deleteButtonStyle);
+            backButton->setStyleSheet(backButtonStyle);
+        }
+
+
 
 
 InformationPage::~InformationPage()
