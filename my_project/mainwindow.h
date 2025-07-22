@@ -32,6 +32,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void paintEvent(QPaintEvent *event);
+    // 添加光暗模式状态
+    bool isDarkMode = false;
+
 
 
 private:
@@ -64,6 +67,9 @@ private:
 
     // 添加信息页面指针
     InformationPage *infoPage;
+    // 光暗切换按钮
+    QPushButton *modeToggleButton;
+
 
     // 添加刷新列表函数
     void refreshContactList();
@@ -76,6 +82,7 @@ public slots:
     void onInfoPageBackClicked(); // 返回按钮点击槽函数
     void onSaveContact(const contact original,const contact modified);
     void onAddButtonClicked();
+    void toggleDarkMode();  // 光暗模式切换槽函数
 
 };
 
