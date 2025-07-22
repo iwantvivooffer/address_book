@@ -74,6 +74,10 @@ private:
     // 添加刷新列表函数
     void refreshContactList();
     void refreshContactListFiltered(const QString &filter,const QString&field);
+    // 添加样式切换函数
+    void applyDarkMode();
+    void applyLightMode();
+
 
 public slots:
     void onDeleteContact(QString name);
