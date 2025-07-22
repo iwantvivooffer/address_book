@@ -1,51 +1,36 @@
-#ifndef INFORMATIONPAGE_H
-#define INFORMATIONPAGE_H
+#ifndef CONTACTMANAGER_H
+#define CONTACTMANAGER_H
 
-#include <QWidget>
-#include <QLabel>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QPropertyAnimation>
-#include <QLineEdit>
-#include <QMessageBox>
+#include<QList>
+#include<QString>
+#include<QSettings>
+#include<QJsonArray>
 
-#include "contact.h"
+#include"contact.h"
 
-class InformationPage : public QWidget
+class contactManager
 {
-    Q_OBJECT
-public:
-    explicit InformationPage(QWidget *parent = nullptr);
-    ~InformationPage();
-
-    void showContactDetails(const contact &contact);
-    void slideIn();
-    void slideOut();
-    void showEvent(QShowEvent *event) override;
-signals:
-    void backClicked();
-    void saveContact(contact original, contact modified);
-    void deleteContact(QString name);
-
-private slots:
-    void onSaveClicked();
-    void onDeleteClicked();
-    void checkForChanges();
-
-
 private:
-    contact originalContact;
-    QLineEdit *nameEdit;
-    QLineEdit *numberEdit;
-    QLineEdit *groupEdit;
-    QLineEdit *emailEdit;
+    QList<contact> contacts;
+    
+public:
+    contactManager();
+    //增删联系人
+    void addcontact(const contact&contact);
+    bool deletecontact(const QString&name);
 
-    QPushButton *backButton;
-    QPushButton *saveButton;
-    QPushButton *deleteButton;
-    QPropertyAnimation *animation;
+    //排序
+    void sortContactsByName();
 
-    bool hasChanges = false;
+    //获取联系人们
+    QList<contact> getcontacts();
+    QList<contact> getcontactsByGroup(QString&group);
+
+    //保存联系人到 JSON 文件
+    void saveToJson(const QString &filename);
+    //从 JSON 文件加载联系人
+    void loadFromJson(const QString &filename);
+
 };
 
-#endif // INFORMATIONPAGE_H
+#endif // CONTACTMANAGER_H
