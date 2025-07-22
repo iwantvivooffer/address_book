@@ -35,7 +35,7 @@ void contact::setnumber(const QString &number) {
     this->number = number;
 }
 
-// JSON序列化
+//保存到JSON文件里面
 QJsonObject contact::toJson() const {
     QJsonObject obj;
     obj["name"] = name;
@@ -44,7 +44,7 @@ QJsonObject contact::toJson() const {
     obj["email"] = email;
     return obj;
 }
-// JSON反序列化
+//从JSON文件里面读取
 contact contact::fromJson(const QJsonObject &obj) {
     contact c;
     c.setname(obj["name"].toString());
