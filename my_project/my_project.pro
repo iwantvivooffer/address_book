@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     contact.cpp \
-    contactmanager.cpp
+    contactmanager.cpp\
+    infornationpage.cpp
 
 HEADERS += \
         mainwindow.h \
     contact.h \
-    contactmanager.h
+    contactmanager.h\
+    infornationpage.h
 
 FORMS += \
         mainwindow.ui
