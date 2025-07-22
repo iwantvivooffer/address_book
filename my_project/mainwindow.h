@@ -32,10 +32,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void paintEvent(QPaintEvent *event);
-    // 添加光暗模式状态
-    bool isDarkMode = false;
-
-
+    bool getLanguageState() const{return isChinese;};
+    bool isDarkMode = false;//光暗标志
+    bool isChinese=true;//语言标志
 
 private:
     Ui::MainWindow *ui;
@@ -47,17 +46,7 @@ private:
     contactManager m_contact;
 
     //编辑输入
-    QLineEdit*nameEdit;
-    QLineEdit*numberEdit;
-    QLineEdit*groupEdit;
-    QLineEdit*emailEdit;
     QLineEdit*searchEdit;
-
-    //部件定义
-    QWidget*nameWidget;
-    QWidget*numberWidget;
-    QWidget*groupWidget;
-    QWidget*emailWidget;
 
     //下拉菜单
     QComboBox*searchCombo;
@@ -65,28 +54,33 @@ private:
     //展示框
     QListWidget*contactlist;
 
+    //按键
+    QPushButton*addButton;
+    QPushButton*langButton;
+    QPushButton *modeToggleButton;// 光暗切换按钮
+
     // 添加信息页面指针
     InformationPage *infoPage;
-    // 光暗切换按钮
-    QPushButton *modeToggleButton;
 
-
-    // 添加刷新列表函数
+    // 刷新列表函数
     void refreshContactList();
     void refreshContactListFiltered(const QString &filter,const QString&field);
-    // 添加样式切换函数
+    //语言转换函数   
+    void updateUILanguage();
+    // 样式切换函数
     void applyDarkMode();
     void applyLightMode();
 
 
 public slots:
     void onDeleteContact(QString name);
-    void onSearchContact();
-    void onContactItemClicked(QListWidgetItem *item);
+    void onSearchContact();//搜索按钮槽函数
+    void onContactItemClicked(QListWidgetItem *item);//信息栏点击
     void onInfoPageBackClicked(); // 返回按钮点击槽函数
-    void onSaveContact(const contact original,const contact modified);
-    void onAddButtonClicked();
-    void toggleDarkMode();  // 光暗模式切换槽函数
+    void onSaveContact(const contact original,const contact modified);//保存槽函数
+    void onAddButtonClicked();//添加槽函数
+    void toggleLanguage();//语言转换槽函数
+    void toggleDarkMode();// 光暗模式切换槽函数
 
 };
 
