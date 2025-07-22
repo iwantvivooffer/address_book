@@ -22,8 +22,8 @@ public:
     void slideIn();
     void slideOut();
     void showEvent(QShowEvent *event) override;
-    // 添加暗色模式设置
-    void setDarkMode(bool darkMode);
+    void setLanguageState(bool chinese);//语言
+    void setDarkMode(bool darkMode);//暗色
 signals:
     void backClicked();
     void saveContact(contact original, contact modified);
@@ -41,6 +41,11 @@ private:
     QLineEdit *numberEdit;
     QLineEdit *groupEdit;
     QLineEdit *emailEdit;
+
+    QLabel *nameTitle;
+    QLabel *numberTitle;
+    QLabel *groupTitle;
+    QLabel *emailTitle;
 
     QPushButton *backButton;
     QPushButton *saveButton;
