@@ -30,11 +30,9 @@ public:
     QString getgroup() const ;
     QString getemail() const ;
 
-    // 序列化成 QJsonObject
-    QJsonObject toJson() const;
-
-    // 从 QJsonObject 创建 contact
-    static contact fromJson(const QJsonObject &obj);
+    //文件操作
+    QJsonObject toJson() const;// 序列化成 QJsonObject
+    static contact fromJson(const QJsonObject &obj);// 从 QJsonObject 创建 contact
 };
 
 #endif // CONTACT_H
