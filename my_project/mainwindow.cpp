@@ -8,6 +8,8 @@
 #include <QVBoxLayout>
 #include<QFont>
 #include<QDebug>
+#include <QStyle>
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,6 +57,14 @@ MainWindow::MainWindow(QWidget *parent) :
     addButton->setIconSize(QSize(30,30));
     addButton->setFlat(true);
     addButton->setToolTip("添加新联系人");
+    // 光暗切换按钮
+    modeToggleButton = new QPushButton(this);
+    modeToggleButton->setFixedSize(30,30);
+    QIcon modeIcon(":/res/picture/光暗转换.png");  // 确保资源中有这个图片
+    modeToggleButton->setIcon(modeIcon);
+    modeToggleButton->setIconSize(QSize(25,25));
+    modeToggleButton->setFlat(true);
+    modeToggleButton->setToolTip("切换光暗模式");
 
     searchbtn->setFlat(true);
     searchLayout->addWidget(searchbtn);
@@ -118,6 +128,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(infoPage, &InformationPage::backClicked, this, &MainWindow::onInfoPageBackClicked);
     connect(infoPage, &InformationPage::saveContact, this, &MainWindow::onSaveContact);
     connect(infoPage, &InformationPage::deleteContact, this, &MainWindow::onDeleteContact);
+        // 应用初始样式（亮色模式）
+    applyLightMode();
 }
 
 // 刷新联系人列表
@@ -289,6 +301,94 @@ void MainWindow::onAddButtonClicked()
 void MainWindow::onInfoPageBackClicked()
 {
     infoPage->slideOut();
+}
+// 光暗模式切换
+void MainWindow::toggleDarkMode()
+{
+    isDarkMode = !isDarkMode;
+    
+    if (isDarkMode) {
+        applyDarkMode();
+    } else {
+        applyLightMode();
+    }
+    
+    // 刷新界面
+    update();
+}
+
+// 应用暗色模式
+void MainWindow::applyDarkMode()
+{
+    // 设置主窗口样式
+    setStyleSheet(R"(
+        QWidget {
+            background-color: #2D2D30;
+            color: #FFFFFF;
+        }
+        QListWidget {
+            background-color: #252526;
+            color: #FFFFFF;
+            border: 1px solid #3F3F46;
+        }
+        QListWidget::item {
+            color: #FFFFFF;
+            border-bottom: 1px solid #3F3F46;
+        }
+        QListWidget::item:selected {
+            background-color: #094771;
+        }
+        QLineEdit {
+            background-color: #3C3C3C;
+            color: #FFFFFF;
+            border: 1px solid #3F3F46;
+            border-radius: 6px;
+        }
+        QComboBox {
+            background-color: #3C3C3C;
+            color: #FFFFFF;
+            border: 1px solid #3F3F46;
+            border-radius: 6px;
+        }
+        QComboBox QAbstractItemView {
+            background-color: #3C3C3C;
+            color: #FFFFFF;
+            border: 1px solid #3F3F46;
+        }
+        QPushButton {
+            background-color: #3C3C3C;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+        }
+    )");
+    
+    // 更新信息页面样式
+    if (infoPage) {
+        infoPage->setDarkMode(true);
+    }
+}
+
+// 应用亮色模式
+void MainWindow::applyLightMode()
+{
+    // 恢复默认样式
+    setStyleSheet("");
+    
+    // 重新应用搜索框样式
+    QString blurStyle = R"(
+        background-color: rgba(255, 255, 255, 120);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 80);
+        padding: 6px;
+        color: black;
+    )";
+    searchEdit->setStyleSheet(blurStyle);
+    
+    // 更新信息页面样式
+    if (infoPage) {
+        infoPage->setDarkMode(false);
+    }
 }
 
 MainWindow::~MainWindow()
