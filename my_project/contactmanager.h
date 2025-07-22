@@ -26,9 +26,9 @@ public:
     QList<contact> getcontacts();
     QList<contact> getcontactsByGroup(QString&group);
 
-    //保存联系人到 JSON 文件
+    //保存联系人到JSON文件
     void saveToJson(const QString &filename);
-    //从 JSON 文件加载联系人
+    //从JSON文件加载联系人
     void loadFromJson(const QString &filename);
 
 };
