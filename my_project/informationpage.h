@@ -22,6 +22,8 @@ public:
     void slideIn();
     void slideOut();
     void showEvent(QShowEvent *event) override;
+    // 添加暗色模式设置
+    void setDarkMode(bool darkMode);
 signals:
     void backClicked();
     void saveContact(contact original, contact modified);
@@ -46,6 +48,7 @@ private:
     QPropertyAnimation *animation;
 
     bool hasChanges = false;
+    bool isDarkMode = false;  // 添加暗色模式状态
 };
 
 #endif // INFORMATIONPAGE_H
