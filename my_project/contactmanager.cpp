@@ -22,19 +22,19 @@ bool contactManager::deletecontact(const QString &name){
             return true;
         }
     }
-    return false;  // 没找到对应联系人
+    return false;  //没找到对应联系人
 }
 
 //排序实现
 void contactManager::sortContactsByName()
 {
     QCollator collator;
-    collator.setLocale(QLocale::Chinese); // 支持中文拼音排序
-    collator.setNumericMode(true);
+    collator.setLocale(QLocale::Chinese); //设置语言区域：中文
+    collator.setNumericMode(true);//实现数字感知的排序
 
     std::sort(contacts.begin(), contacts.end(), [&](const contact &a, const contact &b) {
         return collator.compare(a.getname(), b.getname()) < 0;
-    });
+    });//c++的算法，利用lambda函数快速排序
 }
 
 //获取联系人
@@ -57,13 +57,13 @@ QList<contact> contactManager::getcontactsByGroup(QString &group){
 
 //保存和读取
 void contactManager::saveToJson(const QString &filename) {
-    QJsonArray jsonArray;
+    QJsonArray jsonArray;//封装成一个数组便于存储
     for (const contact &c : contacts) {
         jsonArray.append(c.toJson());
     }
-    QJsonDocument doc(jsonArray);
+    QJsonDocument doc(jsonArray);//便于写入文件
     QFile file(filename);
-    if (file.open(QIODevice::WriteOnly)) {
+    if (file.open(QIODevice::WriteOnly)) {//如果没有就创建一个文件
         file.write(doc.toJson());
         file.close();
     }
@@ -77,7 +77,7 @@ void contactManager::loadFromJson(const QString &filename) {
     file.close();
     QJsonDocument doc = QJsonDocument::fromJson(data);
     if (!doc.isArray()) {
-        return; //格式不正确
+        return; //确保是一个JSON数组
     }
     contacts.clear();
     QJsonArray jsonArray = doc.array();
