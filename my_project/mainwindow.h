@@ -44,7 +44,7 @@ private:
     //文件路径名
     QString path = QCoreApplication::applicationDirPath() + "/contacts.json";
 
-    //定义对象
+    //定义对象：联系人管理器
     contactManager m_contact;
 
     //编辑输入
@@ -65,7 +65,7 @@ private:
     InformationPage *infoPage;
 
     AlphabetIndexBar* indexBar;  // 字母索引条
-    QLabel *indexPopup = nullptr; // 添加提示标签
+    QLabel *indexPopup = nullptr; // 添加提示标签，用于显示当前点击的字母
     
     // 刷新列表函数
     void refreshContactList();
