@@ -15,7 +15,7 @@ QString contact::getgroup() const {
     return group;
 }
 QString contact::getname() const {
-    return name;
+    return name.trimmed().replace("姓名：", "");
 }
 QString contact::getnumber() const {
     return number;
