@@ -1,4 +1,5 @@
 #include "informationpage.h"
+#include "mainwindow.h"
 #include <QPainter>
 #include <QPixmap>
 #include <QShowEvent>
@@ -16,7 +17,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     // 背景层
     QWidget *backgroundLayer = new QWidget(this);
     backgroundLayer->setGeometry(0, 0, width(), height());
-    backgroundLayer->setStyleSheet(R"(background-color: #f5deb3;)");
+    backgroundLayer->setStyleSheet(R"(background-color: #f5deb3;)");//棕色背景
 
     // 内容框
     int margin = 20;
@@ -79,7 +80,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     QHBoxLayout *groupLayout = new QHBoxLayout();
     QLabel *groupIcon = new QLabel(contentFrame);
     groupIcon->setPixmap(QPixmap(":/res/picture/friend.png").scaled(50, 50, Qt::KeepAspectRatio));
-    QLabel *groupTitle = new QLabel("组别：", contentFrame);
+    groupTitle = new QLabel("组别：", contentFrame);
     groupTitle = new QLabel(contentFrame);
     groupEdit = new QLineEdit(contentFrame);
     groupEdit->setStyleSheet(editStyle);
@@ -102,7 +103,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     emailLayout->addWidget(emailIcon);
     emailLayout->addWidget(emailTitle);
     emailLayout->addWidget(emailEdit);
-    layout->addLayout(emailLayout); // 将邮箱行添加到主布局
+    layout->addLayout(emailLayout);
 
 
     // 按钮布局
@@ -169,6 +170,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
 
     // 初始化UI语言
     updateUILanguage();
+     isChinese = true;
 }
 
 void InformationPage::showEvent(QShowEvent *event)
