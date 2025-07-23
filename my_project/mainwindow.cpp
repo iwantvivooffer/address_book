@@ -1,5 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "AlphabetIndexBar.h"
+#include "PinyinHelper.h"
+
 #include <QWidget>
 #include <QLabel>
 #include <QMessageBox>
@@ -10,6 +13,10 @@
 #include <QPainter>
 #include <QPixmap>
 #include<QScrollBar>
+#include <QStyle>
+#include <QIcon>
+#include <QPixmap>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // 中央部件
     QWidget* central = new QWidget(this);
-    QVBoxLayout* layout = new QVBoxLayout(central);
+    QHBoxLayout *mainLayout = new QHBoxLayout(central);
+    QVBoxLayout* layout = new QVBoxLayout();
 
     // 搜索区域
     QHBoxLayout *searchLayout = new QHBoxLayout;
@@ -172,12 +180,27 @@ MainWindow::MainWindow(QWidget *parent) :
     searchLayout->addWidget(langButton);
     searchLayout->addWidget(addButton);
 
-
+    // 创建索引提示标签
+        indexPopup = new QLabel(this);
+        indexPopup->setAlignment(Qt::AlignCenter);
+        indexPopup->setFixedSize(60, 60);
+        indexPopup->setStyleSheet(R"(
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+        )");
+        indexPopup->hide(); // 初始隐藏
+    
     // 主布局
     layout->setContentsMargins(20, 20, 20, 20);//设置边距
     layout->setSpacing(15);
     layout->addLayout(searchLayout);
     layout->addWidget(contactlist);
+    indexBar = new AlphabetIndexBar(this);
+    mainLayout->addWidget(indexBar);
+    mainLayout->addLayout(layout);
     setCentralWidget(central);
 
     // 毛玻璃效果
@@ -204,6 +227,88 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(langButton, &QPushButton::clicked, this, &MainWindow::toggleLanguage);
     connect(modeToggleButton,&QPushButton::clicked,this,&MainWindow::toggleDarkMode);
 
+    connect(indexBar, &AlphabetIndexBar::letterClicked, this, [=](QChar letter) {
+        // 高亮字母
+        indexBar->highlightLetter(letter);
+
+        QList<contact> all = m_contact.getcontacts();
+        bool found = false;
+        int targetIndex = -1;
+
+        // 查找匹配的联系人
+        for (int i = 0; i < all.size(); ++i) {
+            QChar ch = PinyinHelper::getInitial(all[i].getname()).toUpper();
+
+            // 处理"#"组
+            if (letter == '#') {
+                if (!ch.isLetter()) {
+                    targetIndex = i;
+                    found = true;
+                    break;
+                }
+            }
+            // 处理字母组 - 修复：直接比较字符
+            else if (ch == letter) {
+                targetIndex = i;
+                found = true;
+                break;
+            }
+        }
+
+        // 如果没有找到匹配项，找下一个字母
+        if (!found && letter != '#') {
+            QList<QChar> indexLetters = indexBar->getIndexLetters();
+            int letterIndex = indexLetters.indexOf(letter);
+            if (letterIndex >= 0 && letterIndex < indexLetters.size() - 1) {
+                for (int i = letterIndex + 1; i < indexLetters.size(); i++) {
+                    QChar nextLetter = indexLetters[i];
+                    for (int j = 0; j < all.size(); j++) {
+                        QChar ch = PinyinHelper::getInitial(all[j].getname()).toUpper();
+                        if (ch == nextLetter) {
+                            targetIndex = j;
+                            letter = nextLetter; // 更新显示的字母
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+            }
+        }
+
+        if (targetIndex >= 0) {
+            // 获取目标联系人对应的首字母
+            QChar currentInitial = PinyinHelper::getInitial(all[targetIndex].getname()).toUpper();
+            if (!currentInitial.isLetter()) {
+                currentInitial = '#';
+            }
+
+            // 遍历 QListWidget，找到匹配的 section 分组标题项
+            for (int i = 0; i < contactlist->count(); i++) {
+                QListWidgetItem* item = contactlist->item(i);
+                if (item->data(Qt::UserRole).toString() == "section") {
+                    QString sectionText = item->text().trimmed();
+                    if (sectionText.startsWith(currentInitial)) {
+                        contactlist->setCurrentItem(item);
+                        contactlist->scrollToItem(item, QAbstractItemView::PositionAtTop);
+
+                        // 显示提示框
+                        indexPopup->setText(QString(currentInitial));
+                        indexPopup->move(width() - 100, 50);
+                        indexPopup->show();
+                        indexPopup->raise();
+
+                        QTimer::singleShot(2000, this, [this]() {
+                            indexPopup->hide();
+                        });
+                        break;
+                    }
+                }
+            }
+        }
+
+    });
+    
     // 加载联系人到列表
     refreshContactList();
 
@@ -223,8 +328,39 @@ void MainWindow::refreshContactList() {
 
     QFont itemFont("方正舒体", 20);
     QList<contact> all = m_contact.getcontacts();
-
+     QChar lastInitial = '\0';
+    
     for(auto &c : all) {
+         QString name = c.getname().trimmed();
+        if (name.isEmpty()) continue;
+
+        // 获取拼音首字母
+        QChar currentInitial = PinyinHelper::getInitial(name).toUpper();
+
+        // 非字母开头的归为"#"组
+        if (!currentInitial.isLetter()) {
+            currentInitial = '#';
+        }
+
+        // 添加分组标题
+        if (currentInitial != lastInitial) {
+            lastInitial = currentInitial;
+
+            QString sectionTitle;
+            if (currentInitial == '#') {
+                sectionTitle = "# 其他";
+            } else {
+                sectionTitle = currentInitial;
+            }
+
+            QListWidgetItem* sectionItem = new QListWidgetItem(sectionTitle);
+            sectionItem->setFont(sectionFont);
+            sectionItem->setBackground(QColor(200, 200, 200, 150));
+            sectionItem->setFlags(Qt::NoItemFlags);
+            sectionItem->setData(Qt::UserRole, "section"); // 标识为分组
+            contactlist->addItem(sectionItem);
+        }
+        
         //用\n来实现换行显示
         QString text = isChinese ? QString("姓名：%1\n电话：%2").arg(c.getname()).arg(c.getnumber())
                                 : QString("Name: %1\nPhone: %2").arg(c.getname()).arg(c.getnumber());
@@ -240,10 +376,12 @@ void MainWindow::refreshContactList() {
 void MainWindow::refreshContactListFiltered(const QString &filter, const QString &field) {
     contactlist->clear();
     QList<contact> all = m_contact.getcontacts();
-
+     QChar lastInitial = '\0';
+    
     for (const contact &c : all) {
         bool match = false;
-
+        QString name = c.getname().trimmed();
+        
         if (filter.isEmpty()) {
             match = true;
         } else if (field == "姓名"||field== "Name") {
@@ -257,6 +395,30 @@ void MainWindow::refreshContactListFiltered(const QString &filter, const QString
         }
 
         if (match) {
+            // 获取拼音首字母
+            QChar currentInitial = PinyinHelper::getInitial(name).toUpper();
+            if (!currentInitial.isLetter()) {
+                currentInitial = '#';
+            }
+
+            // 添加分组标题
+            if (currentInitial != lastInitial) {
+                lastInitial = currentInitial;
+
+                QString sectionTitle;
+                if (currentInitial == '#') {
+                    sectionTitle = "# 其他";
+                } else {
+                    sectionTitle = currentInitial;
+                }
+
+                QListWidgetItem* sectionItem = new QListWidgetItem(sectionTitle);
+                sectionItem->setFont(QFont("Microsoft YaHei", 10, QFont::Bold));
+                sectionItem->setBackground(QColor(200, 200, 200, 150));
+                sectionItem->setFlags(Qt::NoItemFlags);
+                contactlist->addItem(sectionItem);
+            }
+            //添加联系人项
             QFont itemFont("方正舒体", 20);
             QString text = isChinese ? QString("姓名：%1\n电话：%2").arg(c.getname()).arg(c.getnumber())
                                     : QString("Name: %1\nPhone: %2").arg(c.getname()).arg(c.getnumber());
