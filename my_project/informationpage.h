@@ -18,7 +18,7 @@ public:
     explicit InformationPage(QWidget *parent = nullptr);
     ~InformationPage();
 
-    void showContactDetails(const contact &contact);
+    void showContactDetails(const contact &contact);//显示信息到详细页面
     void slideIn();
     void slideOut();
     void showEvent(QShowEvent *event) override;
@@ -26,7 +26,7 @@ public:
     void setDarkMode(bool darkMode);//暗色
 signals:
     void backClicked();
-    void saveContact(contact original, contact modified);
+    void saveContact(contact original, contact modified);//便于对比前后联系人详细变化
     void deleteContact(QString name);
 
 private slots:
@@ -53,8 +53,10 @@ private:
     QPropertyAnimation *animation;
 
     bool hasChanges = false;
-bool isChinese=true;
+    bool isChinese = true;  // 添加语言状态变量
     bool isDarkMode = false;  // 添加暗色模式状态
+
+    void updateUILanguage();
 };
 
 #endif // INFORMATIONPAGE_H
