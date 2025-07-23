@@ -29,13 +29,17 @@ SOURCES += \
         mainwindow.cpp \
     contact.cpp \
     contactmanager.cpp \
-    informationpage.cpp
+    informationpage.cpp\
+    PinyinHelper.cpp\
+    AlphabetlndexBar.cpp
 
 HEADERS += \
         mainwindow.h \
     contact.h \
     contactmanager.h \
-    informationpage.h
+    informationpage.h\
+    PinyinHelper.h\
+    AlphabetlndexBar.h
 
 FORMS += \
         mainwindow.ui
