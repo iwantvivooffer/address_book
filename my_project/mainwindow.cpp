@@ -247,7 +247,7 @@ MainWindow::MainWindow(QWidget *parent) :
                     break;
                 }
             }
-            // 处理字母组 - 修复：直接比较字符
+            // 处理字母组
             else if (ch == letter) {
                 targetIndex = i;
                 found = true;
@@ -327,6 +327,8 @@ void MainWindow::refreshContactList() {
     m_contact.sortContactsByName();
 
     QFont itemFont("方正舒体", 20);
+    QFont sectionFont("方正舒体", 10, QFont::Bold);
+
     QList<contact> all = m_contact.getcontacts();
      QChar lastInitial = '\0';
     
@@ -662,6 +664,10 @@ void MainWindow::updateUILanguage()
 
     // 刷新列表显示
     refreshContactList();
+    //刷新索引条
+        if (indexBar) {
+            indexBar->update();
+        }
 }
 
 MainWindow::~MainWindow()
