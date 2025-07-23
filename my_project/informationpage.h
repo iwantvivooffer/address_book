@@ -53,6 +53,7 @@ private:
     QPropertyAnimation *animation;
 
     bool hasChanges = false;
+bool isChinese=true;
     bool isDarkMode = false;  // 添加暗色模式状态
 };
 
