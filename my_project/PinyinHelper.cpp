@@ -9,7 +9,7 @@ QMap<QChar, QString> PinyinHelper::createPinyinMap()
     QMap<QChar, QString> map;
 
     // 使用 QString 和 at(0) 获取正确的 QChar
-    map.insert(QString("啊").at(0), "a");
+    map.insert(QString("啊").at(0), "a");//at(0)表示获取键值，也就是字符串首字母
     map.insert(QString("阿").at(0), "a");
     map.insert(QString("八").at(0), "ba");
     map.insert(QString("吧").at(0), "ba");
@@ -133,8 +133,6 @@ QMap<QChar, QString> PinyinHelper::createPinyinMap()
     map.insert(QString("中").at(0), "zhong");
     map.insert(QString("周").at(0), "zhou");
     map.insert(QString("朱").at(0), "zhu");
-
-    // 添加更多常用汉字
     map.insert(QString("去").at(0), "qu");
     map.insert(QString("电").at(0), "dian");
     map.insert(QString("话").at(0), "hua");
@@ -167,7 +165,6 @@ QString PinyinHelper::getFullPinyin(const QString &text)
     for (const QChar &ch : text) {
         if (pinyinMap.contains(ch)) {
             QString pinyin = pinyinMap.value(ch);
-            qDebug() << "Character:" << ch << "Pinyin:" << pinyin; // 调试输出
             result += pinyin;
         } else if (ch.isLetterOrNumber()) {
             result += ch.toLower();
@@ -175,7 +172,6 @@ QString PinyinHelper::getFullPinyin(const QString &text)
             result += " ";
         }
     }
-    qDebug() << "Full Pinyin for" << text << ":" << result; // 调试输出
     return result;
 }
 
