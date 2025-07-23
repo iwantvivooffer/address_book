@@ -30,17 +30,18 @@ bool contactManager::deletecontact(const QString &name){
 //排序实现
 void contactManager::sortContactsByName()
 {
+    //利用sort和lambda函数实现排序
     std::sort(contacts.begin(), contacts.end(), [](const contact &a, const contact &b) {
         QString nameA = a.getname().trimmed();
         QString nameB = b.getname().trimmed();
 
         // 处理空名字
-        if (nameA.isEmpty()) return true;
-        if (nameB.isEmpty()) return false;
+        if (nameA.isEmpty()) return true;//如果A为空，A放在前面
+        if (nameB.isEmpty()) return false;//反之则B
 
         // 获取拼音首字母
-        QChar initA = PinyinHelper::getInitial(nameA);
-        QChar initB = PinyinHelper::getInitial(nameB);
+        QChar initA = nameA.isEmpty() ? '#' : PinyinHelper::getInitial(nameA);
+        QChar initB = nameB.isEmpty() ? '#' : PinyinHelper::getInitial(nameB);
 
         // 特殊字符排在前面
         if (initA == '#' && initB != '#') return true;
@@ -51,8 +52,8 @@ void contactManager::sortContactsByName()
         }
 
         // 获取拼音全拼
-        QString pinyinA = PinyinHelper::getFullPinyin(nameA);
-        QString pinyinB = PinyinHelper::getFullPinyin(nameB);
+        QString pinyinA = nameA.isEmpty() ? "" : PinyinHelper::getFullPinyin(nameA);
+        QString pinyinB = nameB.isEmpty() ? "" : PinyinHelper::getFullPinyin(nameB);
 
         // 直接比较拼音字符串
         return pinyinA.compare(pinyinB, Qt::CaseInsensitive) < 0;
@@ -67,8 +68,8 @@ QList<contact> contactManager::getcontacts(){
 }
 
 QList<contact> contactManager::getcontactsByGroup(QString &group){
-    QList<contact> result;
-    for (auto &c : contacts) {
+    QList<contact> result;//创建空容器
+    for (auto &c : contacts) {//遍历所有联系人
             if (c.getgroup() == group) {
                 result.append(c);
             }
@@ -101,7 +102,7 @@ void contactManager::loadFromJson(const QString &filename) {
     if (!doc.isArray()) {
         return; //确保是一个JSON数组
     }
-    contacts.clear();
+    contacts.clear();//清空数据，方便存入数据
     QJsonArray jsonArray = doc.array();
     for (const QJsonValue &val : jsonArray) {
         QJsonObject obj = val.toObject();
