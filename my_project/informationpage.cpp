@@ -26,6 +26,7 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
         background-color: white;
         border: 1px solid #d0b090;
         border-radius: 8px;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     )");
 
     // 内容布局
@@ -103,8 +104,6 @@ InformationPage::InformationPage(QWidget *parent) : QWidget(parent)
     emailLayout->addWidget(emailEdit);
     layout->addLayout(emailLayout); // 将邮箱行添加到主布局
 
-    // 增加一个弹性空间，让按钮布局下沉
-    layout->addStretch();
 
     // 按钮布局
     QHBoxLayout *buttonLayout = new QHBoxLayout();
