@@ -19,6 +19,8 @@
 #include"contactmanager.h"
 #include"contact.h"
 #include"informationpage.h"
+#include "AlphabetIndexBar.h"
+#include "PinyinHelper.h"
 
 namespace Ui {
 class MainWindow;
@@ -62,6 +64,9 @@ private:
     // 添加信息页面指针
     InformationPage *infoPage;
 
+    AlphabetIndexBar* indexBar;  // 字母索引条
+    QLabel *indexPopup = nullptr; // 添加提示标签
+    
     // 刷新列表函数
     void refreshContactList();
     void refreshContactListFiltered(const QString &filter,const QString&field);
