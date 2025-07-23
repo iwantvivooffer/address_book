@@ -1,8 +1,10 @@
 #include "contactmanager.h"
+#include "PinyinHelper.h"
 #include <QFile>
 #include <QJsonDocument>
 #include<algorithm>
 #include<QCollator>
+#include <QDebug>
 
 contactManager::contactManager()
 {
@@ -28,13 +30,33 @@ bool contactManager::deletecontact(const QString &name){
 //排序实现
 void contactManager::sortContactsByName()
 {
-    QCollator collator;
-    collator.setLocale(QLocale::Chinese); //设置语言区域：中文
-    collator.setNumericMode(true);//实现数字感知的排序
+    std::sort(contacts.begin(), contacts.end(), [](const contact &a, const contact &b) {
+        QString nameA = a.getname().trimmed();
+        QString nameB = b.getname().trimmed();
 
-    std::sort(contacts.begin(), contacts.end(), [&](const contact &a, const contact &b) {
-        return collator.compare(a.getname(), b.getname()) < 0;
-    });//c++的算法，利用lambda函数快速排序
+        // 处理空名字
+        if (nameA.isEmpty()) return true;
+        if (nameB.isEmpty()) return false;
+
+        // 获取拼音首字母
+        QChar initA = PinyinHelper::getInitial(nameA);
+        QChar initB = PinyinHelper::getInitial(nameB);
+
+        // 特殊字符排在前面
+        if (initA == '#' && initB != '#') return true;
+        if (initA != '#' && initB == '#') return false;
+        if (initA == '#' && initB == '#') {
+            // 都是特殊字符，按原始字符串排序
+            return nameA < nameB;
+        }
+
+        // 获取拼音全拼
+        QString pinyinA = PinyinHelper::getFullPinyin(nameA);
+        QString pinyinB = PinyinHelper::getFullPinyin(nameB);
+
+        // 直接比较拼音字符串
+        return pinyinA.compare(pinyinB, Qt::CaseInsensitive) < 0;
+    });
 }
 
 //获取联系人
