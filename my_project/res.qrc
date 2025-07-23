@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/picture/add.png</file>
+        <file>res/picture/add.webp</file>
+        <file>res/picture/bk1.png</file>
+        <file>res/picture/bk2.png</file>
+        <file>res/picture/bk3.jpg</file>
+        <file>res/picture/common.webp</file>
+        <file>res/picture/emile.png</file>
+        <file>res/picture/family.jpg</file>
+        <file>res/picture/friend.jpg</file>
+        <file>res/picture/friend.png</file>
+        <file>res/picture/icon.png</file>
+        <file>res/picture/language.jpg</file>
+        <file>res/picture/language.png</file>
+        <file>res/picture/phone.png</file>
+        <file>res/picture/search.jpg</file>
+        <file>res/picture/search.png</file>
+        <file>res/picture/user.jpg</file>
+        <file>res/picture/user.png</file>
+        <file>res/picture/返回.png</file>
+        <file>res/picture/更多.png</file>
+        <file>res/picture/光暗转换.png</file>
+        <file>res/picture/添加.png</file>
+        <file>res/picture/bk1.jpg</file>
+        <file>res/picture/bk2.jpg</file>
+        <file>res/picture/bk4.jpg</file>
+        <file>res/picture/bk5.jpg</file>
+        <file>res/picture/bk6.jpg</file>
+        <file>res/picture/bk7.jpg</file>
+        <file>res/picture/down-arrow.png</file>
+        <file>res/picture/head1.png</file>
+        <file>res/picture/head2.png</file>
+        <file>res/picture/head3.png</file>
+    </qresource>
+</RCC>
